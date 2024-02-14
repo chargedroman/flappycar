@@ -12,7 +12,7 @@ import java.util.TimerTask
 class FlappyTicker(val tick: () -> Unit) {
 
     companion object {
-        private const val INTERVAL = 1000 / 24L // 24 times per second
+        private const val INTERVAL = 1000 / 60L // 60 times per second
     }
 
     private val timer = Timer()
