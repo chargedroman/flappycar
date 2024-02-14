@@ -1,6 +1,7 @@
 package com.roman.flappy.view
 
 import android.view.MotionEvent
+import com.roman.flappy.game.models.FlappyGameArgs
 
 /**
  *
@@ -15,7 +16,7 @@ interface FlappyContract {
 
         fun onTouch(event: MotionEvent)
 
-        fun onStart()
+        fun onStart(gameArgs: FlappyGameArgs)
         fun onStop()
 
         fun getMainDrawer(): Drawer

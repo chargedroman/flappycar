@@ -7,7 +7,6 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.contains
 import com.roman.flappy.R
 
 /**
@@ -21,6 +20,7 @@ class CarDrawer(context: Context): Drawer {
     companion object {
         const val MIN_MOVE = -15
         const val MAX_MOVE = 15
+        const val MOTION_SENSITIVITY = 30
     }
 
     private val carDrawable: Drawable?
@@ -29,11 +29,18 @@ class CarDrawer(context: Context): Drawer {
     private val carBounds = Rect()
     private val touchPoint = Point()
 
+    private var canvasWidth = 0
+    private var canvasHeight = 0
+
     private var currentShiftX = 0
     private var currentShiftY = 0
 
+
     override fun onDraw(canvas: Canvas) {
         carDrawable?.let {
+            this.canvasWidth = canvas.width
+            this.canvasHeight = canvas.height
+
             val carWidthHalf = it.intrinsicWidth / 2
             val carHeightHalf = it.intrinsicHeight / 2
             val canvasWidthHalf = canvas.width / 2
@@ -82,6 +89,39 @@ class CarDrawer(context: Context): Drawer {
         //shift based on user touch
         currentShiftX += dx.toInt().coerceAtLeast(MIN_MOVE).coerceAtMost(MAX_MOVE)
         currentShiftY += dy.toInt().coerceAtLeast(MIN_MOVE).coerceAtMost(MAX_MOVE)
+
+        fixShift()
     }
+
+
+    fun onTilt(motionX: Float, motionY: Float) {
+        val x = (MOTION_SENSITIVITY * -motionX).toInt()
+        val y = (MOTION_SENSITIVITY * motionY).toInt()
+
+        //shift based on sensor data
+        currentShiftX += x.coerceAtLeast(MIN_MOVE).coerceAtMost(MAX_MOVE)
+        currentShiftY += y.coerceAtLeast(MIN_MOVE).coerceAtMost(MAX_MOVE)
+
+        fixShift()
+    }
+
+    private fun fixShift() {
+        val canvasWidthHalf = canvasWidth / 2
+        val carWidthHalf = carBounds.width() / 2
+
+        currentShiftX = currentShiftX
+            .coerceAtLeast(-canvasWidthHalf + carWidthHalf)
+            .coerceAtMost(canvasWidthHalf - carWidthHalf)
+
+        val canvasHeightHalf = canvasHeight / 2
+        val carHeightHalf = carBounds.height() / 2
+
+        currentShiftY = currentShiftY
+            .coerceAtLeast(-canvasHeightHalf - carHeightHalf)
+            .coerceAtMost(carHeightHalf)
+
+        println("okhttp $currentShiftX $currentShiftY")
+    }
+
 
 }

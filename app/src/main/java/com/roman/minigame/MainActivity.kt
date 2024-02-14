@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.roman.flappy.game.FlappyPresenter
+import com.roman.flappy.game.models.FlappyGameArgs
+import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.view.FlappyView
 
 /**
@@ -25,9 +27,10 @@ class MainActivity: AppCompatActivity() {
 
         val flappyView = findViewById<FlappyView>(R.id.view_flappy)
 
+        val gameArgs = FlappyGameArgs(gameControl = FlappyGameControl.SENSOR)
         val presenter = FlappyPresenter(applicationContext)
         flappyView.setPresenter(presenter)
-        presenter.onStart()
+        presenter.onStart(gameArgs)
     }
 
 

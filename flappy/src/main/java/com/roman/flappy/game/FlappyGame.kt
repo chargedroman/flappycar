@@ -3,6 +3,8 @@ package com.roman.flappy.game
 import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
+import com.roman.flappy.game.models.FlappyGameArgs
+import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.view.BackgroundDrawer
 import com.roman.flappy.view.CarDrawer
 import com.roman.flappy.view.Drawer
@@ -21,29 +23,42 @@ class FlappyGame(
     //ticks 60 times each second
     private val ticker = FlappyTicker(this::tickTock)
 
-    //generally the amount of pixels moved
-    private var currentGameSpeed = 20
+    //listens to phone sensor
+    private val accelerometer = FlappyTilt(applicationContext, this::onTilt)
+
+    private var args: FlappyGameArgs? = null
+
 
     //define all the drawers and then call them in the right order in [onDraw]
     private val backgroundDrawer = BackgroundDrawer(applicationContext)
     private val carDrawer = CarDrawer(applicationContext)
 
 
-    fun start() = synchronized(this) {
+    fun start(args: FlappyGameArgs) = synchronized(this) {
+        this.args = args
         ticker.start()
+
+        if (args.gameControl == FlappyGameControl.SENSOR)
+            accelerometer.start()
     }
 
     fun stop() = synchronized(this) {
+        this.args = null
         ticker.stop()
+        accelerometer.stop()
     }
 
 
     fun onTouch(event: MotionEvent) {
-        carDrawer.onTouch(event)
-
-        val action = event.action and MotionEvent.ACTION_MASK
-        //println("okhttp $action ${event.x} ${event.y}")
+        if (args?.gameControl == FlappyGameControl.TOUCH)
+            carDrawer.onTouch(event)
     }
+
+    fun onTilt(x: Float, y: Float) {
+        if (args?.gameControl == FlappyGameControl.SENSOR)
+            carDrawer.onTilt(x, y)
+    }
+
 
     override fun onDraw(canvas: Canvas) {
         backgroundDrawer.onDraw(canvas)
@@ -52,7 +67,7 @@ class FlappyGame(
 
 
     private fun tickTock() {
-        backgroundDrawer.tickTock(currentGameSpeed)
+        backgroundDrawer.tickTock(args?.gameSpeed ?: 0)
         triggerRedraw.invoke()
     }
 
