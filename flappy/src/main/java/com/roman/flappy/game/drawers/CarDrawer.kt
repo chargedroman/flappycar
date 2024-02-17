@@ -1,4 +1,4 @@
-package com.roman.flappy.view
+package com.roman.flappy.game.drawers
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import com.roman.flappy.R
+import com.roman.flappy.view.Drawer
 
 /**
  *
@@ -119,8 +120,6 @@ class CarDrawer(context: Context): Drawer {
         currentShiftY = currentShiftY
             .coerceAtLeast(-canvasHeightHalf - carHeightHalf)
             .coerceAtMost(carHeightHalf)
-
-        println("okhttp $currentShiftX $currentShiftY")
     }
 
 

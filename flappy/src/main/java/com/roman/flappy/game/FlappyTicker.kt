@@ -15,20 +15,24 @@ class FlappyTicker(val tick: () -> Unit) {
         private const val INTERVAL = 1000 / 60L // 60 times per second
     }
 
-    private val timer = Timer()
-
-    private val tickTask = object : TimerTask() {
-        override fun run() {
-            tick.invoke()
-        }
-    }
+    private var timer: Timer? = null
 
     fun start() {
-        timer.scheduleAtFixedRate(tickTask, 0, INTERVAL)
+        timer = Timer()
+        timer?.scheduleAtFixedRate(createTimerTask(), 0, INTERVAL)
     }
 
     fun stop() {
-        timer.cancel()
+        timer?.cancel()
+        timer = null
+    }
+
+    private fun createTimerTask(): TimerTask {
+        return object : TimerTask() {
+            override fun run() {
+                tick.invoke()
+            }
+        }
     }
 
 }

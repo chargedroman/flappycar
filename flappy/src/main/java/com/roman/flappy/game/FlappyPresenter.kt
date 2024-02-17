@@ -2,7 +2,6 @@ package com.roman.flappy.game
 
 import android.content.Context
 import android.view.MotionEvent
-import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.view.Drawer
 import com.roman.flappy.view.FlappyContract
 
@@ -12,11 +11,11 @@ import com.roman.flappy.view.FlappyContract
  * Created: 13.02.24
  */
 
-class FlappyPresenter(private val applicationContext: Context) : FlappyContract.Presenter {
+class FlappyPresenter(applicationContext: Context) : FlappyContract.Presenter {
 
     private var view: FlappyContract.View? = null
 
-    private val flappyGame = FlappyGame(applicationContext) {
+    private val flappyGame = FlappyGameImpl(applicationContext) {
         view?.notifyChanged()
     }
 
@@ -34,16 +33,11 @@ class FlappyPresenter(private val applicationContext: Context) : FlappyContract.
         flappyGame.onTouch(event)
     }
 
-    override fun onStart(gameArgs: FlappyGameArgs) {
-        flappyGame.start(gameArgs)
-    }
-
-    override fun onStop() {
-        flappyGame.stop()
-    }
-
-
     override fun getMainDrawer(): Drawer {
+        return flappyGame
+    }
+
+    override fun getGame(): FlappyGame {
         return flappyGame
     }
 

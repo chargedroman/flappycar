@@ -1,4 +1,4 @@
-package com.roman.flappy.view
+package com.roman.flappy.game.drawers
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.roman.flappy.R
+import com.roman.flappy.view.Drawer
 
 /**
  *

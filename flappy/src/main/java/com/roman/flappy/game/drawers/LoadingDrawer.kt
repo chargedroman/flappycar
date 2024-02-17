@@ -1,4 +1,4 @@
-package com.roman.flappy.view
+package com.roman.flappy.game.drawers
 
 import android.content.Context
 import android.graphics.Canvas
