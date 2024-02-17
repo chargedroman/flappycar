@@ -16,10 +16,14 @@ import com.roman.flappy.view.FlappyDrawer
 class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
 
     private val backgroundDrawable1: Drawable?
-        = ContextCompat.getDrawable(context, R.drawable.street)
+        = ContextCompat.getDrawable(context, R.drawable.street2)
 
     private val backgroundDrawable2: Drawable?
-            = ContextCompat.getDrawable(context, R.drawable.street)
+            = ContextCompat.getDrawable(context, R.drawable.street2)
+
+    private val drawableAspectRatio =
+        (backgroundDrawable1?.intrinsicHeight ?: 0) / (backgroundDrawable1?.intrinsicWidth ?: 1)
+
 
     private val bounds1 = Rect()
     private val bounds2 = Rect()
@@ -33,18 +37,21 @@ class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
      * all of that is shifted by [currentShift] to the bottom
      */
     override fun onDraw(canvas: Canvas) {
-        this.maxShift = canvas.height
+        val adjustedHeight = canvas.height * drawableAspectRatio
+        val adjustedWidth = canvas.width
 
+        this.maxShift = adjustedHeight
         val currentShift = currentShift
+
         bounds1.left = 0
-        bounds1.right = canvas.width
+        bounds1.right = adjustedWidth
         bounds2.left = 0
-        bounds2.right = canvas.width
+        bounds2.right = adjustedWidth
 
         bounds1.top = currentShift
-        bounds1.bottom = canvas.height + currentShift
+        bounds1.bottom = adjustedHeight + currentShift
 
-        bounds2.top = -canvas.height + currentShift
+        bounds2.top = -adjustedHeight + currentShift
         bounds2.bottom = currentShift
 
         backgroundDrawable1?.bounds = bounds1
