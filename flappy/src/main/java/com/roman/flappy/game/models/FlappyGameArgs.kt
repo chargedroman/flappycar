@@ -1,7 +1,9 @@
 package com.roman.flappy.game.models
 
-import com.roman.flappy.game.tools.GameSpeedController
-import com.roman.flappy.game.tools.GameSpeedControllerLinear
+import com.roman.flappy.game.tools.FlappyBatteryController
+import com.roman.flappy.game.tools.FlappyBatteryControllerOne
+import com.roman.flappy.game.tools.FlappyGameSpeedController
+import com.roman.flappy.game.tools.FlappyGameSpeedControllerDecreasing
 
 /**
  *
@@ -10,8 +12,7 @@ import com.roman.flappy.game.tools.GameSpeedControllerLinear
  */
 
 data class FlappyGameArgs(
-    val gameSpeedInitialKmPerH: Int = 10,
-    val gameSpeedMaxKmPerH: Int = 201,
-    val gameSpeedController: GameSpeedController = GameSpeedControllerLinear(),
+    val gameSpeedController: FlappyGameSpeedController = FlappyGameSpeedControllerDecreasing(),
+    val gameBatteryController: FlappyBatteryController = FlappyBatteryControllerOne(),
     val gameControl: FlappyGameControl = FlappyGameControl.SENSOR
 )

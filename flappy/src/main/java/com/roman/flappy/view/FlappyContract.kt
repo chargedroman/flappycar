@@ -14,7 +14,7 @@ interface FlappyContract {
         fun attachView(view: View)
         fun detachView()
         fun onTouch(event: MotionEvent)
-        fun getMainDrawer(): Drawer
+        fun getMainDrawer(): FlappyDrawer
 
         fun getGame(): FlappyGame
     }

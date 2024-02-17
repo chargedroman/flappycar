@@ -7,6 +7,15 @@ package com.roman.flappy.game.models
  */
 
 data class FlappyGameScore(
-    val distanceMeters: Long,
-    val currentSpeedKmPerHour: Int,
-)
+    var distanceMeters: Long,
+    var currentSpeedKmPerHour: Int,
+    var batteryStatus: FlappyBatteryStatus?,
+) {
+    /**
+     * game is over when battery is low and speed is 0;
+     * you could theoretically reach the next thing with empty battery and get power again:)
+     */
+    fun isGameOver(): Boolean {
+        return batteryStatus?.isEmpty() == true && currentSpeedKmPerHour == 0
+    }
+}

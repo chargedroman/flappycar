@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import com.roman.flappy.R
-import com.roman.flappy.view.Drawer
+import com.roman.flappy.view.FlappyDrawer
 
 /**
  *
@@ -16,7 +16,7 @@ import com.roman.flappy.view.Drawer
  * Created: 14.02.24
  */
 
-class CarDrawer(context: Context): Drawer {
+class FlappyCarDrawer(context: Context): FlappyDrawer {
 
     companion object {
         const val MIN_MOVE = -15

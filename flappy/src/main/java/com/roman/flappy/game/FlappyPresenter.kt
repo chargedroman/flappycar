@@ -2,8 +2,8 @@ package com.roman.flappy.game
 
 import android.content.Context
 import android.view.MotionEvent
-import com.roman.flappy.view.Drawer
 import com.roman.flappy.view.FlappyContract
+import com.roman.flappy.view.FlappyDrawer
 
 /**
  *
@@ -33,7 +33,7 @@ class FlappyPresenter(applicationContext: Context) : FlappyContract.Presenter {
         flappyGame.onTouch(event)
     }
 
-    override fun getMainDrawer(): Drawer {
+    override fun getMainDrawer(): FlappyDrawer {
         return flappyGame
     }
 

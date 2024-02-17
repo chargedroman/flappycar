@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import com.roman.flappy.view.Drawer
+import com.roman.flappy.view.FlappyDrawer
 
 /**
  * just draws some simple loading stuff to show until presenter is attached
@@ -13,7 +13,7 @@ import com.roman.flappy.view.Drawer
  * Created: 13.02.24
  */
 
-class LoadingDrawer(context: Context): Drawer {
+class FlappyLoadingDrawer(context: Context): FlappyDrawer {
 
     private val fullViewRect = Rect()
     private val paint = Paint()

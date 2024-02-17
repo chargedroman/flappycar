@@ -5,13 +5,12 @@ import android.graphics.Canvas
 import android.view.MotionEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.roman.flappy.game.drawers.BackgroundDrawer
-import com.roman.flappy.game.drawers.CarDrawer
+import com.roman.flappy.game.drawers.FlappyBackgroundDrawer
+import com.roman.flappy.game.drawers.FlappyCarDrawer
 import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.game.models.FlappyGameScore
-import com.roman.flappy.view.Drawer
-import kotlin.math.round
+import com.roman.flappy.view.FlappyDrawer
 
 /**
  *
@@ -22,7 +21,7 @@ import kotlin.math.round
 class FlappyGameImpl(
     applicationContext: Context,
     private val triggerRedraw: () -> Unit
-): FlappyGame, Drawer {
+): FlappyGame, FlappyDrawer {
 
     //ticks 60 times each second
     private val ticker = FlappyTicker(this::tickTock)
@@ -34,25 +33,21 @@ class FlappyGameImpl(
     //game parameters like initial drive speed & control via touch or sensor
     private var args: FlappyGameArgs? = null
     private var currentTick: Long = 0
-    private var currentKmPerH = 0
-    private var currentDistanceCm: Long = 0
 
     //current score like distance ran
-    private var gameScoreCurrent: FlappyGameScore? = null
+    private val gameScoreCurrent: FlappyGameScore = FlappyGameScore(0, 0, null)
     private val gameScore = MutableLiveData<FlappyGameScore>()
 
 
     //define all the drawers and then call them in the right order in [onDraw]
-    private val backgroundDrawer = BackgroundDrawer(applicationContext)
-    private val carDrawer = CarDrawer(applicationContext)
+    private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext)
+    private val carDrawer = FlappyCarDrawer(applicationContext)
 
 
     override fun initGame(args: FlappyGameArgs) = synchronized(this) {
         this.args = args
-        this.currentKmPerH = 0
         this.currentTick = 0
-        this.currentDistanceCm = 0
-        gameScore.postValue(FlappyGameScore(0, 0))
+        gameScore.postValue(FlappyGameScore(0, 0, null))
     }
 
     override fun startGame() = synchronized(this) {
@@ -91,39 +86,35 @@ class FlappyGameImpl(
 
 
     private fun tickTock() {
-        updateGameScore()
-
-        backgroundDrawer.tickTock(currentKmPerH)
+        checkIfGameOver()
+        onTickUpdateGameScore()
         triggerRedraw.invoke()
     }
 
-    private fun updateGameScore() = synchronized(this) {
+    private fun onTickUpdateGameScore() = synchronized(this) {
         val args = args ?: return
 
-        if (currentKmPerH < args.gameSpeedInitialKmPerH)
-            currentKmPerH = args.gameSpeedInitialKmPerH
-
-        if (currentKmPerH > args.gameSpeedMaxKmPerH)
-            currentKmPerH = args.gameSpeedMaxKmPerH
-
         currentTick++
-        currentDistanceCm += centimetersTravelledInOneTickFor(currentKmPerH)
-        val currentDistanceMeters = currentDistanceCm / 100
 
-        val previousScore = gameScoreCurrent
-        val newScore = FlappyGameScore(currentDistanceMeters, currentKmPerH)
-        if (previousScore != newScore) {
-            gameScoreCurrent = newScore
-            gameScore.postValue(newScore)
-        }
+        val currentBatteryStatus = args.gameBatteryController.getCurrentBatteryStatus()
+        val currentKmPerH = args.gameSpeedController.getCurrentSpeedKmPerHour()
 
-        currentKmPerH += args.gameSpeedController.onTick(currentTick, currentKmPerH)
+        args.gameSpeedController.onTick(currentTick, currentBatteryStatus)
+        args.gameBatteryController.onTick(currentTick, currentKmPerH)
+
+        gameScoreCurrent.batteryStatus = currentBatteryStatus
+        gameScoreCurrent.currentSpeedKmPerHour = currentKmPerH
+        gameScoreCurrent.distanceMeters = args.gameSpeedController.getCurrentDistanceMeters()
+        gameScore.postValue(gameScoreCurrent)
+
+        backgroundDrawer.tickTock(currentKmPerH)
     }
 
-    private fun centimetersTravelledInOneTickFor(speedKmPerHour: Int): Long {
-        val metersPerSecond = (speedKmPerHour * 1000) / 3600.0
-        val centimetersPerTick = (metersPerSecond * 100) / 60.0
-        return round(centimetersPerTick).toLong()
+
+    private fun checkIfGameOver() {
+        if (gameScoreCurrent.isGameOver())
+            stopGame()
     }
+
 
 }

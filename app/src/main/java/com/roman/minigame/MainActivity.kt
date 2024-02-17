@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.roman.flappy.game.FlappyPresenter
 import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameControl
-import com.roman.flappy.game.tools.GameSpeedControllerDecreasing
+import com.roman.flappy.game.tools.FlappyGameSpeedControllerDecreasing
 import com.roman.flappy.view.FlappyView
 
 /**
@@ -30,7 +30,7 @@ class MainActivity: AppCompatActivity() {
         val flappyView = findViewById<FlappyView>(R.id.view_flappy)
 
         //define game parameters
-        val speedController = GameSpeedControllerDecreasing()
+        val speedController = FlappyGameSpeedControllerDecreasing()
         val gameArgs = FlappyGameArgs(
             gameControl = FlappyGameControl.SENSOR,
             gameSpeedController = speedController
@@ -46,8 +46,11 @@ class MainActivity: AppCompatActivity() {
         this.presenter = presenter
 
         //update score to show to the user somehow
+        //as this can be called 60 times per second,
+        //make sure to not do heavy stuff like allocating objects
+        //(for now I'll still allocate String to print it)
         game.getScore().observe(this) {
-            println("okhttp currentSpeed=${it.currentSpeedKmPerHour} travelled=${it.distanceMeters} meters")
+            println("okhttp currentSpeed=${it.currentSpeedKmPerHour} travelled=${it.distanceMeters}m battery=${it.batteryStatus}")
         }
     }
 

@@ -6,14 +6,14 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.roman.flappy.R
-import com.roman.flappy.view.Drawer
+import com.roman.flappy.view.FlappyDrawer
 
 /**
  *
  * Author: romanvysotsky
  * Created: 14.02.24
  */
-class BackgroundDrawer(context: Context): Drawer {
+class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
 
     private val backgroundDrawable1: Drawable?
         = ContextCompat.getDrawable(context, R.drawable.street)
@@ -53,14 +53,14 @@ class BackgroundDrawer(context: Context): Drawer {
         backgroundDrawable2?.draw(canvas)
     }
 
-    fun tickTock(currentGameSpeed: Int) {
+    fun tickTock(currentSpeedKmPerHour: Int) {
         if (maxShift == 0)
             return
 
-        if (currentShift >= (maxShift - currentGameSpeed))
+        if (currentShift >= (maxShift - currentSpeedKmPerHour))
             currentShift = 0
         else
-            currentShift += currentGameSpeed
+            currentShift += currentSpeedKmPerHour
     }
 
 }

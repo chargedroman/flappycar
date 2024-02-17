@@ -6,7 +6,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.roman.flappy.game.drawers.LoadingDrawer
+import com.roman.flappy.game.drawers.FlappyLoadingDrawer
 
 /**
  *
@@ -25,11 +25,11 @@ class FlappyView: View, FlappyContract.View {
         defStyleAttr
     ) {
         args = FlappyViewArgs(context, attrs)
-        defaultDrawer = LoadingDrawer(context)
+        defaultDrawer = FlappyLoadingDrawer(context)
     }
 
     private val args: FlappyViewArgs
-    private val defaultDrawer: LoadingDrawer
+    private val defaultDrawer: FlappyLoadingDrawer
     private var presenter: FlappyContract.Presenter? = null
 
 
@@ -66,7 +66,7 @@ class FlappyView: View, FlappyContract.View {
     }
 
     override fun notifyChanged() {
-        post(this::invalidate)
+        invalidate()
     }
 
 }

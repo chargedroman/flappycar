@@ -8,7 +8,7 @@ import android.graphics.Canvas
  * Created: 13.02.24
  */
 
-interface Drawer {
+interface FlappyDrawer {
 
     fun onDraw(canvas: Canvas)
 
