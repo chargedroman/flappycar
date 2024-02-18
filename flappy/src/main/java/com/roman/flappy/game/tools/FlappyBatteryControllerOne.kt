@@ -31,5 +31,14 @@ class FlappyBatteryControllerOne(
         return currentStatus
     }
 
+    override fun notifyCarOnChargingLane(isOnLane: Boolean) {
+        if (isOnLane.not()) return
+
+        //lets charge 100wh for now, which is 100wh per tick as long as you hit the lane on each tick
+        currentStatus.currentChargeWh += 100
+        currentStatus.currentChargeWh = currentStatus.currentChargeWh
+            .coerceAtMost(currentStatus.maxChargeWh)
+    }
+
 
 }

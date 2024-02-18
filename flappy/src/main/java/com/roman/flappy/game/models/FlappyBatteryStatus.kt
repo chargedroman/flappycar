@@ -8,10 +8,10 @@ package com.roman.flappy.game.models
 
 data class FlappyBatteryStatus(
     var currentChargeWh: Int,
-    var totalChargeWh: Int,
+    val maxChargeWh: Int,
 ) {
     fun getPercentage(): Int {
-        return currentChargeWh / (totalChargeWh / 100)
+        return currentChargeWh / (maxChargeWh / 100)
     }
 
     fun isEmpty(): Boolean {

@@ -13,5 +13,6 @@ interface FlappyGameSpeedController {
         currentBatteryStatus: FlappyBatteryStatus?
     )
     fun getCurrentSpeedKmPerHour(): Int
+    fun getCurrentSpeedPercent(): Double
     fun getCurrentDistanceMeters(): Long
 }

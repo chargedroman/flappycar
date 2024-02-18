@@ -21,13 +21,19 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
     companion object {
         const val MIN_MOVE = -15
         const val MAX_MOVE = 15
-        const val MOTION_SENSITIVITY = 30
+        const val MOTION_SENSITIVITY_X = 160
+        const val MOTION_SENSITIVITY_Y = 60
+        const val MOTION_SENSITIVITY_MIN = 10
     }
 
     private val carDrawable: Drawable?
             = ContextCompat.getDrawable(context, R.drawable.car2)
 
+    private val chargingBubbleDrawable: Drawable?
+            = ContextCompat.getDrawable(context, R.drawable.charge_bubble)
+
     private val carBounds = Rect()
+    private val chargingBubbleBounds = Rect()
     private val touchPoint = Point()
 
     private var canvasWidth = 0
@@ -35,6 +41,8 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
 
     private var currentShiftX = 0
     private var currentShiftY = 0
+
+    private var isCarOnChargingLane: Boolean = false
 
 
     override fun onDraw(canvas: Canvas) {
@@ -70,6 +78,21 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
             it.bounds = carBounds
             it.draw(canvas)
         }
+
+        chargingBubbleDrawable?.let {
+            if (isCarOnChargingLane) {
+                val halfWidth = it.intrinsicWidth
+                val halfHeight = it.intrinsicHeight
+
+                chargingBubbleBounds.top = carBounds.top
+                chargingBubbleBounds.left = carBounds.right - halfWidth
+                chargingBubbleBounds.bottom = carBounds.top + halfHeight
+                chargingBubbleBounds.right = carBounds.right
+
+                it.bounds = chargingBubbleBounds
+                it.draw(canvas)
+            }
+        }
     }
 
 
@@ -95,9 +118,13 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
     }
 
 
-    fun onTilt(motionX: Float, motionY: Float) {
-        val x = (MOTION_SENSITIVITY * -motionX).toInt()
-        val y = (MOTION_SENSITIVITY * motionY).toInt()
+    fun onTilt(motionX: Float, motionY: Float, speedPercent: Double) {
+        val motionSensitivityX = (MOTION_SENSITIVITY_X * speedPercent).toInt()
+            .coerceAtLeast(MOTION_SENSITIVITY_MIN)
+        val motionSensitivityY = (MOTION_SENSITIVITY_Y * speedPercent).toInt()
+            .coerceAtLeast(MOTION_SENSITIVITY_MIN)
+        val x = (motionSensitivityX * -motionX).toInt()
+        val y = (motionSensitivityY * motionY).toInt()
 
         //shift based on sensor data
         currentShiftX += x.coerceAtLeast(MIN_MOVE).coerceAtMost(MAX_MOVE)
@@ -120,6 +147,14 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
         currentShiftY = currentShiftY
             .coerceAtLeast(-canvasHeightHalf - carHeightHalf)
             .coerceAtMost(carHeightHalf)
+    }
+
+    fun getCarBounds(): Rect {
+        return carBounds
+    }
+
+    fun notifyCarOnChargingLane(isOnLane: Boolean) {
+        this.isCarOnChargingLane = isOnLane
     }
 
 

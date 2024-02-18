@@ -22,7 +22,7 @@ class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
             = ContextCompat.getDrawable(context, R.drawable.street2)
 
     private val drawableAspectRatio =
-        (backgroundDrawable1?.intrinsicHeight ?: 0) / (backgroundDrawable1?.intrinsicWidth ?: 1)
+        (backgroundDrawable1?.intrinsicHeight?.toFloat() ?: 0.0f) / (backgroundDrawable1?.intrinsicWidth ?: 1)
 
 
     private val bounds1 = Rect()
@@ -37,8 +37,8 @@ class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
      * all of that is shifted by [currentShift] to the bottom
      */
     override fun onDraw(canvas: Canvas) {
-        val adjustedHeight = canvas.height * drawableAspectRatio
         val adjustedWidth = canvas.width
+        val adjustedHeight = (adjustedWidth * drawableAspectRatio).toInt()
 
         this.maxShift = adjustedHeight
         val currentShift = currentShift

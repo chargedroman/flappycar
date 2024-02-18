@@ -24,8 +24,10 @@ class FlappyGameSpeedControllerDecreasing(
         currentDistanceCm += centimetersTravelledInOneTickFor(currentKmPerH)
 
         if (currentBatteryStatus?.isEmpty() == true) {
-            if (currentTick % 30L == 0L)
-                currentKmPerH -= 1
+            if (currentTick % 30L == 0L) {
+                currentKmPerH -= 2
+                currentKmPerH = currentKmPerH.coerceAtLeast(0)
+            }
             return
         }
 
@@ -47,6 +49,10 @@ class FlappyGameSpeedControllerDecreasing(
 
     override fun getCurrentSpeedKmPerHour(): Int {
         return currentKmPerH
+    }
+
+    override fun getCurrentSpeedPercent(): Double {
+        return (currentKmPerH / (gameSpeedMaxKmPerH / 100.0)) / 100.0
     }
 
     override fun getCurrentDistanceMeters(): Long {
