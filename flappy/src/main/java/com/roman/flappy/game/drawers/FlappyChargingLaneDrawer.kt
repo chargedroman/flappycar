@@ -24,7 +24,8 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
         Rect(),
         true,
         Int.MIN_VALUE,
-        nextRandomLaneTime()
+        nextRandomLaneTime(),
+        0
     )
 
     private val laneBig = Lane(
@@ -32,7 +33,8 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
         Rect(),
         false,
         Int.MIN_VALUE,
-        nextRandomLaneTime()
+        nextRandomLaneTime(),
+        0
     )
 
     private val laneHuge = Lane(
@@ -40,11 +42,20 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
         Rect(),
         false,
         Int.MIN_VALUE,
-        nextRandomLaneTime()
+        nextRandomLaneTime(),
+        0
     )
+
+    private val laneWarningLeft =
+        ContextCompat.getDrawable(context, R.drawable.lane_warning_left)
+    private val laneWarningRight =
+        ContextCompat.getDrawable(context, R.drawable.lane_warning_right)
+
 
     private val canvasBounds = Rect()
     private val intersection = Rect()
+    private val tempRect1 = Rect()
+    private val tempRect2 = Rect()
     private var maxShift = 0
     private var isCarOnLeftSide = false
 
@@ -57,16 +68,31 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
         onDrawLane(canvas, laneSmall)
         onDrawLane(canvas, laneBig)
         onDrawLane(canvas, laneHuge)
+
+        onDrawWarning(canvas, laneSmall)
+        onDrawWarning(canvas, laneBig)
+        onDrawWarning(canvas, laneHuge)
+    }
+
+    private fun onDrawWarning(canvas: Canvas, lane: Lane) {
+        val willComeFromTop = lane.currentShift > Int.MIN_VALUE && lane.currentShift < 0
+        if (willComeFromTop) {
+            val warning = if (lane.isLeft) laneWarningLeft else laneWarningRight
+            val height = warning?.intrinsicHeight ?: 0
+            val halfHeight = height / 4
+            val left = if (lane.isLeft) halfHeight else canvas.width - halfHeight - height
+            val right = if (lane.isLeft) left + height else canvas.width - halfHeight
+            val bottom = halfHeight + height
+
+            warning?.let {
+                warning.setBounds(left, halfHeight, right, bottom)
+                warning.draw(canvas)
+            }
+        }
     }
 
     private fun onDrawLane(canvas: Canvas, lane: Lane) {
         if (lane.lane == null) return
-
-        /*
-        val aspectRatio = lane.lane.intrinsicHeight / lane.lane.intrinsicWidth
-        val adjustedHeight = ((canvas.height / 2.5) * aspectRatio).toInt()
-        val adjustedWidth = (canvas.width / 2.5).toInt()
-         */
 
         val aspectRatio = lane.lane.intrinsicHeight.toFloat() / lane.lane.intrinsicWidth
         val adjustedWidth = (canvas.width / 2.5).toInt()
@@ -131,17 +157,37 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
         tickTock(laneSmall, currentTick, currentSpeedKmPerHour)
         tickTock(laneBig, currentTick, currentSpeedKmPerHour)
         tickTock(laneHuge, currentTick, currentSpeedKmPerHour)
+        fixOverlappingLanes(laneSmall, laneBig)
+        fixOverlappingLanes(laneSmall, laneHuge)
+        fixOverlappingLanes(laneBig, laneHuge)
+    }
+
+    private fun fixOverlappingLanes(a: Lane, b: Lane) {
+        val isOnSameSide = a.isLeft == b.isLeft
+        if (isOnSameSide.not())
+            return
+
+        tempRect1.set(a.bounds)
+        tempRect2.set(b.bounds)
+
+        //when they intersect, just place the upper one further on top of the other
+        if (tempRect1.intersect(tempRect2)) {
+            val lane = if (a.bounds.top > b.bounds.top) a else b
+            lane.currentShift -= a.bounds.height() + b.bounds.height()
+        }
     }
 
     private fun tickTock(lane: Lane, currentTick: Long, currentSpeedKmPerHour: Int) {
+        val isLaneNotComing = lane.currentShift == Int.MIN_VALUE
         val isLaneVisible = lane.bounds.intersect(canvasBounds)
-        val isTimeToShowLane = (currentTick + lane.laneTime) % lane.laneTime == 0L
+        val isTimeToShowLane = currentTick - lane.tickWhenShiftSet == lane.laneTime
 
-        if (!isLaneVisible && isTimeToShowLane) {
+        if (isLaneNotComing || (!isLaneVisible && isTimeToShowLane)) {
+            lane.tickWhenShiftSet = currentTick
             lane.isLeft = nextRandomIsLeft()
             lane.laneTime = nextRandomLaneTime()
             //to make sure it comes from the top and doesn't "appear" suddenly
-            lane.currentShift = - canvasBounds.bottom - (lane.lane?.intrinsicHeight ?: 0) * 4
+            lane.currentShift = - canvasBounds.bottom - (lane.lane?.intrinsicHeight ?: 0) * 10
         }
 
         tickTock(lane, currentSpeedKmPerHour)
@@ -159,7 +205,7 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
 
 
     private fun nextRandomLaneTime(): Long {
-        return randomGenerator.nextLong(1, 700)
+        return randomGenerator.nextLong(240, 960)
     }
 
     /**
@@ -167,8 +213,8 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
      * (make the user move!)
      */
     private fun nextRandomIsLeft(): Boolean {
-        val random = randomGenerator.nextInt(0, 4) == 0
-        return random xor isCarOnLeftSide
+        val random = randomGenerator.nextInt(0, 6) == 0
+        return random xor !isCarOnLeftSide
     }
 
 
@@ -178,6 +224,7 @@ class FlappyChargingLaneDrawer(context: Context): FlappyDrawer {
         var isLeft: Boolean,
         var currentShift: Int,
         var laneTime: Long,
+        var tickWhenShiftSet: Long,
     )
 
 }

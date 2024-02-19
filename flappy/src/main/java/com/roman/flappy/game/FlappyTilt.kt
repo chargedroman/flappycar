@@ -24,7 +24,7 @@ class FlappyTilt(
     private var filteredX = 0f
     private var filteredY = 0f
     private val alpha = 0.1f  // Smoothing factor, adjust as needed
-    private val naturalPhoneTilt = 0.6f // So that the user doesn't have to hold the phone weirdly; better ux for the car control
+    private val naturalPhoneTilt = 0.4f // So that the user doesn't have to hold the phone weirdly; better ux for the car control
 
 
     fun start() {
