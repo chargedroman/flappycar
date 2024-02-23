@@ -20,6 +20,11 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
 
     abstract fun nextRandomIsLeft(): Boolean
 
+    /**
+     * how many % of the car surface must be within the an object to detect a collision
+     */
+    abstract val collisionThreshold: Double
+
 
 
     protected var isCarOnLeftSide = false
@@ -48,37 +53,21 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
         else
             flappyObject.drawable) ?: return
 
-        val adjustedWidth = flappyObject.getWidthInside(canvasBounds)
-        val adjustedHeight = flappyObject.getHeightInside(canvasBounds)
-
-        val halfWidth = adjustedWidth / 2
-        val leftMiddle = (canvas.width / 2) / 2
-        //the background is asymmetric; change/remove -20 if using another background
-        val rightMiddle = (canvas.width / 2) + leftMiddle - 20
-
-        val currentShift = flappyObject.currentDistanceShift
-
-        if (flappyObject.isLeft) {
-            flappyObject.bounds.left = leftMiddle - halfWidth
-            flappyObject.bounds.right = leftMiddle + halfWidth
-        } else {
-            flappyObject.bounds.left = rightMiddle - halfWidth
-            flappyObject.bounds.right = rightMiddle + halfWidth
-        }
-
-        flappyObject.bounds.top = currentShift
-        flappyObject.bounds.bottom = adjustedHeight + currentShift
+        setObjectBounds(flappyObject, canvasBounds)
 
         drawable.bounds = flappyObject.bounds
         drawable.draw(canvas)
     }
+
+    abstract fun setObjectBounds(flappyObject: FlappyObject, canvasBounds: Rect)
+
 
     fun isCollidingWith(carPosition: Rect): Boolean {
         this.isCarOnLeftSide = isCarOnLeftSide(carPosition)
         var isColliding = false
 
         for (flappyObject in flappyObjects) {
-            val intersects = intersectsArea(carPosition, flappyObject.bounds)
+            val intersects = intersectsArea(carPosition, flappyObject.bounds, collisionThreshold)
             flappyObject.collidedWithUser = flappyObject.collidedWithUser || intersects
             isColliding = isColliding || intersects
         }
@@ -96,7 +85,7 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
      *  @return true if [rectA] intersects [rectB] in such a way that
      *  [areaIntersectThreshold]% of [rectA] is inside [rectB]
      */
-    private fun intersectsArea(rectA: Rect, rectB: Rect, areaIntersectThreshold: Double = 0.5): Boolean {
+    private fun intersectsArea(rectA: Rect, rectB: Rect, areaIntersectThreshold: Double): Boolean {
         if (rectB.intersect(rectA)) {
             intersection.left = rectA.left.coerceAtLeast(rectB.left)
             intersection.top = rectA.top.coerceAtLeast(rectB.top)
