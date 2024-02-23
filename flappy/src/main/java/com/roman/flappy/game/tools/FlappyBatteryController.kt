@@ -11,5 +11,6 @@ import com.roman.flappy.game.models.FlappyBatteryStatus
 interface FlappyBatteryController {
     fun onTick(currentTick: Long, currentSpeedKmPerHour: Int)
     fun notifyCarOnChargingLane(isOnLane: Boolean)
+    fun notifyCarOnCone(isOnLane: Boolean)
     fun getCurrentBatteryStatus(): FlappyBatteryStatus
 }

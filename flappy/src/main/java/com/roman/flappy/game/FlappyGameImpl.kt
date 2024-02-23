@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import com.roman.flappy.game.drawers.FlappyBackgroundDrawer
 import com.roman.flappy.game.drawers.FlappyCarDrawer
 import com.roman.flappy.game.drawers.FlappyChargingLaneDrawer
+import com.roman.flappy.game.drawers.FlappyConeDrawer
 import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.game.models.FlappyGameScore
@@ -43,6 +44,7 @@ class FlappyGameImpl(
     //define all the drawers and then call them in the right order in [onDraw]
     private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext)
     private val laneDrawer = FlappyChargingLaneDrawer(applicationContext)
+    private val coneDrawer = FlappyConeDrawer(applicationContext)
     private val carDrawer = FlappyCarDrawer(applicationContext)
 
 
@@ -86,6 +88,7 @@ class FlappyGameImpl(
     override fun onDraw(canvas: Canvas) {
         backgroundDrawer.onDraw(canvas)
         laneDrawer.onDraw(canvas)
+        coneDrawer.onDraw(canvas)
         carDrawer.onDraw(canvas)
     }
 
@@ -112,12 +115,16 @@ class FlappyGameImpl(
         gameScoreCurrent.distanceMeters = args.gameSpeedController.getCurrentDistanceMeters()
         gameScore.postValue(gameScoreCurrent)
 
-        val isCarOnChargingLane = laneDrawer.isOnChargingLane(carDrawer.getCarBounds())
+        val isCarOnChargingLane = laneDrawer.isCollidingWith(carDrawer.getCarBounds())
+        val isCarOnCone = coneDrawer.isCollidingWith(carDrawer.getCarBounds())
         carDrawer.notifyCarOnChargingLane(isCarOnChargingLane)
+        carDrawer.notifyCarOnCone(isCarOnCone)
         args.gameBatteryController.notifyCarOnChargingLane(isCarOnChargingLane)
+        args.gameBatteryController.notifyCarOnCone(isCarOnChargingLane)
 
         backgroundDrawer.tickTock(currentKmPerH)
         laneDrawer.tickTock(currentTick, currentKmPerH)
+        coneDrawer.tickTock(currentTick, currentKmPerH)
     }
 
 

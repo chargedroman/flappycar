@@ -40,5 +40,14 @@ class FlappyBatteryControllerOne(
             .coerceAtMost(currentStatus.maxChargeWh)
     }
 
+    override fun notifyCarOnCone(isOnLane: Boolean) {
+        if (isOnLane.not()) return
+
+        //lets charge subtract 50wh for now
+        currentStatus.currentChargeWh -= 50
+        currentStatus.currentChargeWh = currentStatus.currentChargeWh
+            .coerceAtLeast(0)
+    }
+
 
 }

@@ -29,6 +29,9 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
     private val carDrawable: Drawable?
             = ContextCompat.getDrawable(context, R.drawable.car2)
 
+    private val unChargingBubbleDrawable: Drawable?
+            = ContextCompat.getDrawable(context, R.drawable.uncharge_bubble)
+
     private val chargingBubbleDrawable: Drawable?
             = ContextCompat.getDrawable(context, R.drawable.charge_bubble)
 
@@ -43,6 +46,7 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
     private var currentShiftY = 0
 
     private var isCarOnChargingLane: Boolean = false
+    private var isCarOnCone: Boolean = false
 
 
     override fun onDraw(canvas: Canvas) {
@@ -88,6 +92,21 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
                 chargingBubbleBounds.left = carBounds.right - halfWidth
                 chargingBubbleBounds.bottom = carBounds.top + halfHeight
                 chargingBubbleBounds.right = carBounds.right
+
+                it.bounds = chargingBubbleBounds
+                it.draw(canvas)
+            }
+        }
+
+        unChargingBubbleDrawable?.let {
+            if (isCarOnCone) {
+                val halfWidth = it.intrinsicWidth
+                val halfHeight = it.intrinsicHeight
+
+                chargingBubbleBounds.top = carBounds.top
+                chargingBubbleBounds.left = carBounds.left
+                chargingBubbleBounds.bottom = carBounds.top + halfHeight
+                chargingBubbleBounds.right = chargingBubbleBounds.left + halfWidth
 
                 it.bounds = chargingBubbleBounds
                 it.draw(canvas)
@@ -155,6 +174,10 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
 
     fun notifyCarOnChargingLane(isOnLane: Boolean) {
         this.isCarOnChargingLane = isOnLane
+    }
+
+    fun notifyCarOnCone(isOnCone: Boolean) {
+        this.isCarOnCone = isOnCone
     }
 
 
