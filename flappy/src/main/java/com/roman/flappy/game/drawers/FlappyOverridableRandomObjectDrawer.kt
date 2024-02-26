@@ -101,7 +101,7 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
     }
     
 
-    fun tickTock(currentTick: Long, currentSpeedKmPerHour: Int) {
+    fun tickTock(currentSpeedKmPerHour: Int) {
         if (canvasBounds.bottom == 0) {
             //wait until everything initializes
             return

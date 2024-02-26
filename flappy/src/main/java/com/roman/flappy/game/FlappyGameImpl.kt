@@ -9,9 +9,12 @@ import com.roman.flappy.game.drawers.FlappyBackgroundDrawer
 import com.roman.flappy.game.drawers.FlappyCarDrawer
 import com.roman.flappy.game.drawers.FlappyChargingLaneDrawer
 import com.roman.flappy.game.drawers.FlappyConeDrawer
+import com.roman.flappy.game.drawers.FlappyDisplayDrawer
 import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.game.models.FlappyGameScore
+import com.roman.flappy.game.tools.FlappyBatteryControllerOne
+import com.roman.flappy.game.tools.FlappyGameSpeedControllerDecreasing
 import com.roman.flappy.view.FlappyDrawer
 
 /**
@@ -37,7 +40,6 @@ class FlappyGameImpl(
     private var currentTick: Long = 0
 
     //current score like distance ran
-    private val gameScoreCurrent: FlappyGameScore = FlappyGameScore(0, 0, null)
     private val gameScore = MutableLiveData<FlappyGameScore>()
 
 
@@ -46,6 +48,11 @@ class FlappyGameImpl(
     private val laneDrawer = FlappyChargingLaneDrawer(applicationContext)
     private val coneDrawer = FlappyConeDrawer(applicationContext)
     private val carDrawer = FlappyCarDrawer(applicationContext)
+    private val displayDrawer = FlappyDisplayDrawer(
+        applicationContext,
+        FlappyGameSpeedControllerDecreasing(),
+        FlappyBatteryControllerOne(),
+    )
 
 
     override fun initGame(args: FlappyGameArgs) = synchronized(this) {
@@ -79,7 +86,7 @@ class FlappyGameImpl(
 
     private fun onTilt(x: Float, y: Float) {
         if (args?.gameControl == FlappyGameControl.SENSOR) {
-            val percent = args?.gameSpeedController?.getCurrentSpeedPercent() ?: 0.0
+            val percent = displayDrawer.getCurrentSpeedPercent()
             carDrawer.onTilt(x, y, percent)
         }
     }
@@ -90,6 +97,7 @@ class FlappyGameImpl(
         laneDrawer.onDraw(canvas)
         coneDrawer.onDraw(canvas)
         carDrawer.onDraw(canvas)
+        displayDrawer.onDraw(canvas)
     }
 
 
@@ -100,36 +108,25 @@ class FlappyGameImpl(
     }
 
     private fun onTickUpdateGameScore() = synchronized(this) {
-        val args = args ?: return
-
         currentTick++
 
-        val currentBatteryStatus = args.gameBatteryController.getCurrentBatteryStatus()
-        val currentKmPerH = args.gameSpeedController.getCurrentSpeedKmPerHour()
-
-        args.gameSpeedController.onTick(currentTick, currentBatteryStatus)
-        args.gameBatteryController.onTick(currentTick, currentKmPerH)
-
-        gameScoreCurrent.batteryStatus = currentBatteryStatus
-        gameScoreCurrent.currentSpeedKmPerHour = currentKmPerH
-        gameScoreCurrent.distanceMeters = args.gameSpeedController.getCurrentDistanceMeters()
-        gameScore.postValue(gameScoreCurrent)
-
-        val isCarOnChargingLane = laneDrawer.isCollidingWith(carDrawer.getCarBounds())
+        val currentKmPerH = displayDrawer.getCurrentSpeed()
+        val isCarOnLane = laneDrawer.isCollidingWith(carDrawer.getCarBounds())
         val isCarOnCone = coneDrawer.isCollidingWith(carDrawer.getCarBounds())
-        carDrawer.notifyCarOnChargingLane(isCarOnChargingLane)
+        carDrawer.notifyCarOnChargingLane(isCarOnLane)
         carDrawer.notifyCarOnCone(isCarOnCone)
-        args.gameBatteryController.notifyCarOnChargingLane(isCarOnChargingLane)
-        args.gameBatteryController.notifyCarOnCone(isCarOnChargingLane)
 
         backgroundDrawer.tickTock(currentKmPerH)
-        laneDrawer.tickTock(currentTick, currentKmPerH)
-        coneDrawer.tickTock(currentTick, currentKmPerH)
+        laneDrawer.tickTock(currentKmPerH)
+        coneDrawer.tickTock(currentKmPerH)
+        displayDrawer.tickTock(currentTick, currentKmPerH, isCarOnLane, isCarOnCone)
+
+        gameScore.postValue(displayDrawer.getGameScore())
     }
 
 
     private fun checkIfGameOver() {
-        if (gameScoreCurrent.isGameOver())
+        if (displayDrawer.getGameScore().isGameOver())
             stopGame()
     }
 
