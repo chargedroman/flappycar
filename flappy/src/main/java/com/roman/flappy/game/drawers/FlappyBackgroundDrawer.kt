@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import com.roman.flappy.R
 import com.roman.flappy.view.FlappyDrawer
 
 /**
@@ -13,16 +12,13 @@ import com.roman.flappy.view.FlappyDrawer
  * Author: romanvysotsky
  * Created: 14.02.24
  */
-class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
+class FlappyBackgroundDrawer(context: Context, streetResource: Int): FlappyDrawer {
 
-    private val backgroundDrawable1: Drawable?
-        = ContextCompat.getDrawable(context, R.drawable.street2)
-
-    private val backgroundDrawable2: Drawable?
-            = ContextCompat.getDrawable(context, R.drawable.street2)
+    private val backgroundDrawable: Drawable?
+        = ContextCompat.getDrawable(context, streetResource)
 
     private val drawableAspectRatio =
-        (backgroundDrawable1?.intrinsicHeight?.toFloat() ?: 0.0f) / (backgroundDrawable1?.intrinsicWidth ?: 1)
+        (backgroundDrawable?.intrinsicHeight?.toFloat() ?: 0.0f) / (backgroundDrawable?.intrinsicWidth ?: 1)
 
 
     private val bounds1 = Rect()
@@ -54,10 +50,10 @@ class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
         bounds2.top = -adjustedHeight + currentShift
         bounds2.bottom = currentShift
 
-        backgroundDrawable1?.bounds = bounds1
-        backgroundDrawable2?.bounds = bounds2
-        backgroundDrawable1?.draw(canvas)
-        backgroundDrawable2?.draw(canvas)
+        backgroundDrawable?.bounds = bounds1
+        backgroundDrawable?.draw(canvas)
+        backgroundDrawable?.bounds = bounds2
+        backgroundDrawable?.draw(canvas)
     }
 
     fun tickTock(currentSpeedKmPerHour: Int) {

@@ -31,13 +31,14 @@ class MainActivity: AppCompatActivity() {
         //define game parameters
         val gameArgs = FlappyGameArgs(
             gameControl = FlappyGameControl.SENSOR,
+            carResource = R.drawable.car2,
+            streetResource = R.drawable.street2
         )
 
         //bind presenter (which holds the game instance)
         val presenter = FlappyPresenter(applicationContext)
-        val game = presenter.getGame()
-        game.initGame(gameArgs)
         flappyView.setPresenter(presenter)
+        presenter.init(gameArgs)
 
         //keep reference for starting/stopping game
         this.presenter = presenter
@@ -46,7 +47,7 @@ class MainActivity: AppCompatActivity() {
         //as this can be called 60 times per second,
         //make sure to not do heavy stuff like allocating objects
         //(for now I'll still allocate String to print it)
-        game.getScore().observe(this) {
+        presenter.getGame()?.getScore()?.observe(this) {
             println("okhttp currentSpeed=${it.currentSpeedKmPerHour} travelled=${it.distanceMeters}m battery=${it.batteryStatus}")
         }
     }

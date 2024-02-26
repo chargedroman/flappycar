@@ -18,8 +18,8 @@ class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() 
         const val CONE_SIZE_FACTOR = 10.0
     }
 
-    private val cone = ContextCompat.getDrawable(context, R.drawable.cone)
-    private val coneSmashed = ContextCompat.getDrawable(context, R.drawable.cone_smashed)
+    private val cone = ContextCompat.getDrawable(context, R.drawable.ic_cone)
+    private val coneSmashed = ContextCompat.getDrawable(context, R.drawable.ic_cone_smashed)
 
     private val list = mutableListOf(
         createNewCone()

@@ -16,7 +16,7 @@ import com.roman.flappy.view.FlappyDrawer
  * Created: 14.02.24
  */
 
-class FlappyCarDrawer(context: Context): FlappyDrawer {
+class FlappyCarDrawer(context: Context, carResource: Int): FlappyDrawer {
 
     companion object {
         const val MIN_MOVE = -15
@@ -27,13 +27,13 @@ class FlappyCarDrawer(context: Context): FlappyDrawer {
     }
 
     private val carDrawable: Drawable?
-            = ContextCompat.getDrawable(context, R.drawable.car2)
+            = ContextCompat.getDrawable(context, carResource)
 
     private val unChargingBubbleDrawable: Drawable?
-            = ContextCompat.getDrawable(context, R.drawable.uncharge_bubble)
+            = ContextCompat.getDrawable(context, R.drawable.ic_uncharge_bubble)
 
     private val chargingBubbleDrawable: Drawable?
-            = ContextCompat.getDrawable(context, R.drawable.charge_bubble)
+            = ContextCompat.getDrawable(context, R.drawable.ic_charge_bubble)
 
     private val carBounds = Rect()
     private val chargingBubbleBounds = Rect()

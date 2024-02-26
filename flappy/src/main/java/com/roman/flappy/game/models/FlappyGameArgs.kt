@@ -7,5 +7,7 @@ package com.roman.flappy.game.models
  */
 
 data class FlappyGameArgs(
-    val gameControl: FlappyGameControl = FlappyGameControl.SENSOR
+    val gameControl: FlappyGameControl,
+    val carResource: Int,
+    val streetResource: Int,
 )

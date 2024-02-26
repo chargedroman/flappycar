@@ -1,7 +1,6 @@
 package com.roman.flappy.game
 
 import androidx.lifecycle.LiveData
-import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameScore
 
 /**
@@ -11,7 +10,6 @@ import com.roman.flappy.game.models.FlappyGameScore
  */
 
 interface FlappyGame {
-    fun initGame(args: FlappyGameArgs)
     fun startGame()
     fun stopGame()
 

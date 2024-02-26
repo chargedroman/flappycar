@@ -25,29 +25,26 @@ import com.roman.flappy.view.FlappyDrawer
 
 class FlappyGameImpl(
     applicationContext: Context,
+    private val args: FlappyGameArgs,
     private val triggerRedraw: () -> Unit
 ): FlappyGame, FlappyDrawer {
 
     //ticks 60 times each second
     private val ticker = FlappyTicker(this::tickTock)
+    private var currentTick: Long = 0
 
     //listens to phone sensor
     private val accelerometer = FlappyTilt(applicationContext, this::onTilt)
-
-
-    //game parameters like initial drive speed & control via touch or sensor
-    private var args: FlappyGameArgs? = null
-    private var currentTick: Long = 0
 
     //current score like distance ran
     private val gameScore = MutableLiveData<FlappyGameScore>()
 
 
     //define all the drawers and then call them in the right order in [onDraw]
-    private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext)
+    private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext, args.streetResource)
     private val laneDrawer = FlappyChargingLaneDrawer(applicationContext)
     private val coneDrawer = FlappyConeDrawer(applicationContext)
-    private val carDrawer = FlappyCarDrawer(applicationContext)
+    private val carDrawer = FlappyCarDrawer(applicationContext, args.carResource)
     private val displayDrawer = FlappyDisplayDrawer(
         applicationContext,
         FlappyGameSpeedControllerDecreasing(),
@@ -55,15 +52,7 @@ class FlappyGameImpl(
     )
 
 
-    override fun initGame(args: FlappyGameArgs) = synchronized(this) {
-        this.args = args
-        this.currentTick = 0
-        gameScore.postValue(FlappyGameScore(0, 0, null))
-    }
-
     override fun startGame() = synchronized(this) {
-        val args = args ?: return
-
         ticker.start()
         if (args.gameControl == FlappyGameControl.SENSOR)
             accelerometer.start()
@@ -80,12 +69,12 @@ class FlappyGameImpl(
 
 
     fun onTouch(event: MotionEvent) {
-        if (args?.gameControl == FlappyGameControl.TOUCH)
+        if (args.gameControl == FlappyGameControl.TOUCH)
             carDrawer.onTouch(event)
     }
 
     private fun onTilt(x: Float, y: Float) {
-        if (args?.gameControl == FlappyGameControl.SENSOR) {
+        if (args.gameControl == FlappyGameControl.SENSOR) {
             val percent = displayDrawer.getCurrentSpeedPercent()
             carDrawer.onTilt(x, y, percent)
         }

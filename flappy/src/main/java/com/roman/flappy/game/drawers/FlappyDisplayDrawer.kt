@@ -50,8 +50,8 @@ class FlappyDisplayDrawer(
         typeface = ResourcesCompat.getFont(context, R.font.quicksand_bold)
     }
 
-    private val speedometerDrawable = ContextCompat.getDrawable(context, R.drawable.speedometer)
-    private val distanceDrawable = ContextCompat.getDrawable(context, R.drawable.road)
+    private val speedometerDrawable = ContextCompat.getDrawable(context, R.drawable.ic_speedometer)
+    private val distanceDrawable = ContextCompat.getDrawable(context, R.drawable.ic_road)
     private val batteryDrawables = BatteryDrawables(context)
     private var batteryCriticallyBlinking = 0
     private val iconBounds = Rect()

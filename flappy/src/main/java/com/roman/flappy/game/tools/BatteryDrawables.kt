@@ -13,13 +13,13 @@ import com.roman.flappy.R
 class BatteryDrawables(context: Context) {
 
     private val critical =
-        ContextCompat.getDrawable(context, R.drawable.battery_0)
+        ContextCompat.getDrawable(context, R.drawable.ic_battery_0)
 
     private val batteries = arrayOf(
-        ContextCompat.getDrawable(context, R.drawable.battery_1),
-        ContextCompat.getDrawable(context, R.drawable.battery_2),
-        ContextCompat.getDrawable(context, R.drawable.battery_3),
-        ContextCompat.getDrawable(context, R.drawable.battery_4),
+        ContextCompat.getDrawable(context, R.drawable.ic_battery_1),
+        ContextCompat.getDrawable(context, R.drawable.ic_battery_2),
+        ContextCompat.getDrawable(context, R.drawable.ic_battery_3),
+        ContextCompat.getDrawable(context, R.drawable.ic_battery_4),
     )
 
     fun getBatteryDrawable(chargePercentage: Int): Drawable? {

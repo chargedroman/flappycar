@@ -20,9 +20,9 @@ class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectD
     }
 
     private val laneWarningLeft =
-        ContextCompat.getDrawable(context, R.drawable.lane_warning_left)
+        ContextCompat.getDrawable(context, R.drawable.ic_lane_warning_left)
     private val laneWarningRight =
-        ContextCompat.getDrawable(context, R.drawable.lane_warning_right)
+        ContextCompat.getDrawable(context, R.drawable.ic_lane_warning_right)
 
     private val laneSmall =
         ContextCompat.getDrawable(context, R.drawable.charging_lane_small)
