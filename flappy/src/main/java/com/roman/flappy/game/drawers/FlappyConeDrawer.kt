@@ -13,34 +13,23 @@ import com.roman.flappy.R
 
 class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() {
 
+    companion object {
+        const val MAX_CONES = 50
+        const val CONE_SIZE_FACTOR = 10.0
+    }
+
+    private val cone = ContextCompat.getDrawable(context, R.drawable.cone)
+    private val coneSmashed = ContextCompat.getDrawable(context, R.drawable.cone_smashed)
+
     private val list = mutableListOf(
-        FlappyObject(
-            drawable = ContextCompat.getDrawable(context, R.drawable.cone),
-            drawableCollided = ContextCompat.getDrawable(context, R.drawable.cone_smashed),
-        ),
-        FlappyObject(
-            drawable = ContextCompat.getDrawable(context, R.drawable.cone),
-            drawableCollided = ContextCompat.getDrawable(context, R.drawable.cone_smashed),
-        ),
-        FlappyObject(
-            drawable = ContextCompat.getDrawable(context, R.drawable.cone),
-            drawableCollided = ContextCompat.getDrawable(context, R.drawable.cone_smashed),
-        ),
-        FlappyObject(
-            drawable = ContextCompat.getDrawable(context, R.drawable.cone),
-            drawableCollided = ContextCompat.getDrawable(context, R.drawable.cone_smashed),
-        ),
-        FlappyObject(
-            drawable = ContextCompat.getDrawable(context, R.drawable.cone),
-            drawableCollided = ContextCompat.getDrawable(context, R.drawable.cone_smashed),
-        ),
+        createNewCone()
     )
 
     override val flappyObjects: List<FlappyObject>
         get() = list
 
     override val collisionThreshold: Double
-        get() = 0.05 //merely touching the cone is enough
+        get() = 0.06 //merely touching the cone is enough
 
 
     /**
@@ -48,7 +37,7 @@ class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() 
      * (make the user move!)
      */
     override fun nextRandomIsLeft(): Boolean {
-        val random = randomGenerator.nextInt(0, 6) == 0
+        val random = randomGenerator.nextInt(0, 4) == 0
         return random xor isCarOnLeftSide
     }
 
@@ -62,8 +51,8 @@ class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() 
         //wait for init
         if (canvasBounds.bottom == 0 || canvasBounds.right == 0) return
 
-        val adjustedWidth = flappyObject.getWidthInside(canvasBounds) / 4
-        val adjustedHeight = flappyObject.getHeightInside(canvasBounds) / 4
+        val adjustedWidth = flappyObject.getWidthInside(canvasBounds)
+        val adjustedHeight = flappyObject.getHeightInside(canvasBounds)
 
         val middle = (canvasBounds.right / 2)
         val currentShift = flappyObject.currentDistanceShift
@@ -80,6 +69,27 @@ class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() 
 
         flappyObject.bounds.top = currentShift
         flappyObject.bounds.bottom = adjustedHeight + currentShift
+    }
+
+
+    fun updateAmountOfCones(currentDistanceMeters: Long) {
+        if (list.size >= MAX_CONES) {
+            return
+        }
+
+        val amountOfCones = (currentDistanceMeters / 100).coerceAtLeast(1)
+
+        if (list.size < amountOfCones) {
+            list.add(createNewCone())
+        }
+    }
+
+    private fun createNewCone(): FlappyObject {
+        return FlappyObject(
+            drawableWidthFactor = CONE_SIZE_FACTOR,
+            drawable = cone,
+            drawableCollided = coneSmashed,
+        )
     }
 
 }

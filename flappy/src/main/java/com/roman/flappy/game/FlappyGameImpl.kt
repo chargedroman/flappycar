@@ -92,7 +92,7 @@ class FlappyGameImpl(
     }
 
 
-    override fun onDraw(canvas: Canvas) {
+    override fun onDraw(canvas: Canvas) = synchronized(this) {
         backgroundDrawer.onDraw(canvas)
         laneDrawer.onDraw(canvas)
         coneDrawer.onDraw(canvas)
@@ -101,13 +101,13 @@ class FlappyGameImpl(
     }
 
 
-    private fun tickTock() {
+    private fun tickTock() = synchronized(this) {
         checkIfGameOver()
         onTickUpdateGameScore()
         triggerRedraw.invoke()
     }
 
-    private fun onTickUpdateGameScore() = synchronized(this) {
+    private fun onTickUpdateGameScore() {
         currentTick++
 
         val currentKmPerH = displayDrawer.getCurrentSpeed()
@@ -121,7 +121,11 @@ class FlappyGameImpl(
         coneDrawer.tickTock(currentKmPerH)
         displayDrawer.tickTock(currentTick, currentKmPerH, isCarOnLane, isCarOnCone)
 
-        gameScore.postValue(displayDrawer.getGameScore())
+        val score = displayDrawer.getGameScore()
+        coneDrawer.updateAmountOfCones(score.distanceMeters)
+        laneDrawer.udpateAmountOfLanes(score.distanceMeters)
+
+        gameScore.postValue(score)
     }
 
 

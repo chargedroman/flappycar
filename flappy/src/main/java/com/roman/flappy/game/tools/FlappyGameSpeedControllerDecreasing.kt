@@ -25,7 +25,7 @@ class FlappyGameSpeedControllerDecreasing(
 
         if (currentBatteryStatus?.isEmpty() == true) {
             if (currentTick % 30L == 0L) {
-                currentKmPerH -= 2
+                currentKmPerH -= 5
                 currentKmPerH = currentKmPerH.coerceAtLeast(0)
             }
             return

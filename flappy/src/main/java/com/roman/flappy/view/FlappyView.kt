@@ -66,7 +66,7 @@ class FlappyView: View, FlappyContract.View {
     }
 
     override fun notifyChanged() {
-        invalidate()
+        postInvalidate()
     }
 
 }

@@ -122,7 +122,9 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
         flappyObject: FlappyObject,
         currentSpeedKmPerHour: Int
     ) {
-        flappyObject.currentDistanceShift += currentSpeedKmPerHour
+        if (flappyObject.currentDistanceShift != Int.MIN_VALUE) {
+            flappyObject.currentDistanceShift += currentSpeedKmPerHour
+        }
 
         if (canvasBounds.bottom != 0 && flappyObject.currentDistanceShift > canvasBounds.bottom) {
             flappyObject.seenByUser = true
@@ -167,6 +169,7 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
 
 
     class FlappyObject(
+        val drawableWidthFactor: Double,
         val drawable: Drawable?,
         val drawableCollided: Drawable? = null,
         val bounds: Rect = Rect(),
@@ -184,7 +187,7 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
         }
 
         fun getWidthInside(canvasBounds: Rect): Int {
-            return (canvasBounds.right / 2.5).toInt()
+            return (canvasBounds.right / drawableWidthFactor).toInt()
         }
     }
 

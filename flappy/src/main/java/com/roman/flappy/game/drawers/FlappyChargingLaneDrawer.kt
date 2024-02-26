@@ -14,17 +14,28 @@ import com.roman.flappy.R
 
 class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectDrawer() {
 
+    companion object {
+        const val MAX_LANES = 6
+        const val LANE_SIZE_FACTOR = 2.5
+    }
+
     private val laneWarningLeft =
         ContextCompat.getDrawable(context, R.drawable.lane_warning_left)
     private val laneWarningRight =
         ContextCompat.getDrawable(context, R.drawable.lane_warning_right)
 
+    private val laneSmall =
+        ContextCompat.getDrawable(context, R.drawable.charging_lane_small)
+    private val laneBig =
+        ContextCompat.getDrawable(context, R.drawable.charging_lane_big)
+    private val laneHuge =
+        ContextCompat.getDrawable(context, R.drawable.charging_lane_huge)
+
+
     private val list = mutableListOf(
-        FlappyObject(ContextCompat.getDrawable(context, R.drawable.charging_lane_small)),
-        FlappyObject(ContextCompat.getDrawable(context, R.drawable.charging_lane_big)),
-        FlappyObject(ContextCompat.getDrawable(context, R.drawable.charging_lane_big)),
-        FlappyObject(ContextCompat.getDrawable(context, R.drawable.charging_lane_big)),
-        FlappyObject(ContextCompat.getDrawable(context, R.drawable.charging_lane_huge))
+        FlappyObject(LANE_SIZE_FACTOR, laneSmall),
+        FlappyObject(LANE_SIZE_FACTOR, laneHuge),
+        FlappyObject(LANE_SIZE_FACTOR, laneSmall),
     )
 
     override val flappyObjects: List<FlappyObject>
@@ -95,6 +106,21 @@ class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectD
 
         flappyObject.bounds.top = currentShift
         flappyObject.bounds.bottom = adjustedHeight + currentShift
+    }
+
+    fun udpateAmountOfLanes(currentDistanceMeters: Long) {
+        if (list.size >= MAX_LANES) {
+            return
+        }
+
+        val amountOfLanes = 1 + (currentDistanceMeters / 200).coerceAtLeast(1)
+
+        if (list.size < amountOfLanes) {
+            if (currentDistanceMeters <= 600)
+                list.add(FlappyObject(LANE_SIZE_FACTOR, laneBig))
+            else
+                list.add(FlappyObject(LANE_SIZE_FACTOR, laneHuge))
+        }
     }
 
 }
