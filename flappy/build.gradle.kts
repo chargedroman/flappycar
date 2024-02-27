@@ -31,6 +31,30 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    publishing {
+        singleVariant("release") {
+            // if you don't want sources/javadoc, remove these lines
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components.findByName("release"))
+                groupId = "com.roman.flappy"
+                artifactId = "flappy-car"
+                version = "1.0.0"
+            }
+        }
+        repositories {
+            mavenLocal()
+        }
+    }
 }
 
 dependencies {
