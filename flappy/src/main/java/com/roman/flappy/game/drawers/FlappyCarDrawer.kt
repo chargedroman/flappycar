@@ -21,9 +21,8 @@ class FlappyCarDrawer(context: Context, carResource: Int): FlappyDrawer {
     companion object {
         const val MIN_MOVE = -15
         const val MAX_MOVE = 15
-        const val MOTION_SENSITIVITY_X = 160
+        const val MOTION_SENSITIVITY_X = 80
         const val MOTION_SENSITIVITY_Y = 60
-        const val MOTION_SENSITIVITY_MIN = 10
     }
 
     private val carDrawable: Drawable?
@@ -138,10 +137,8 @@ class FlappyCarDrawer(context: Context, carResource: Int): FlappyDrawer {
 
 
     fun onTilt(motionX: Float, motionY: Float, speedPercent: Double) {
-        val motionSensitivityX = (MOTION_SENSITIVITY_X * speedPercent).toInt()
-            .coerceAtLeast(MOTION_SENSITIVITY_MIN)
-        val motionSensitivityY = (MOTION_SENSITIVITY_Y * speedPercent).toInt()
-            .coerceAtLeast(MOTION_SENSITIVITY_MIN)
+        val motionSensitivityX = MOTION_SENSITIVITY_X
+        val motionSensitivityY = MOTION_SENSITIVITY_Y
         val x = (motionSensitivityX * -motionX).toInt()
         val y = (motionSensitivityY * motionY).toInt()
 
