@@ -47,6 +47,7 @@ class FlappyGameImpl(
     private val carDrawer = FlappyCarDrawer(applicationContext, args.gameCar)
     private val displayDrawer = FlappyDisplayDrawer(
         applicationContext,
+        args.isMiles,
         FlappyGameSpeedControllerDecreasing(),
         FlappyBatteryControllerOne(),
     )
@@ -75,8 +76,7 @@ class FlappyGameImpl(
 
     private fun onTilt(x: Float, y: Float) {
         if (args.gameControl == FlappyGameControl.SENSOR) {
-            val percent = displayDrawer.getCurrentSpeedPercent()
-            carDrawer.onTilt(x, y, percent)
+            carDrawer.onTilt(x, y)
         }
     }
 

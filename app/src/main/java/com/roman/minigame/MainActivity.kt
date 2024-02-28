@@ -40,7 +40,8 @@ class MainActivity: AppCompatActivity() {
         val gameArgs = FlappyGameArgs(
             gameControl = FlappyGameControl.SENSOR,
             gameCar = gameCar,
-            streetResource = R.drawable.street2
+            streetResource = R.drawable.street2,
+            true,
         )
 
         //bind presenter (which holds the game instance)

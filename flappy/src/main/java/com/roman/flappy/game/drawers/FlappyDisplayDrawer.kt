@@ -22,6 +22,7 @@ import com.roman.flappy.view.FlappyDrawer
 
 class FlappyDisplayDrawer(
     context: Context,
+    private val isMiles: Boolean,
     private val speedController: FlappyGameSpeedController,
     private val batteryController: FlappyBatteryController
 ): FlappyDrawer {
@@ -30,7 +31,6 @@ class FlappyDisplayDrawer(
         FlappyGameScore(0, 0, null)
 
     fun getCurrentSpeed() = speedController.getCurrentSpeedKmPerHour()
-    fun getCurrentSpeedPercent() = speedController.getCurrentSpeedPercent()
     fun getGameScore() = gameScoreCurrent
 
 
@@ -83,7 +83,7 @@ class FlappyDisplayDrawer(
         speedometerDrawable?.bounds = iconBounds
         speedometerDrawable?.draw(canvas)
 
-        val text = gameScoreCurrent.currentSpeedKmPerHour.toString() + " km/h"
+        val text = gameScoreCurrent.getSpeedText(isMiles)
         val textX = iconBounds.right.toFloat() + iconMargin / 2
         val textY = iconBounds.top.toFloat() + iconSize / 2.2f + iconMargin
         canvas.drawText(text, textX, textY, textPaint)
@@ -98,7 +98,7 @@ class FlappyDisplayDrawer(
         distanceDrawable?.bounds = iconBounds
         distanceDrawable?.draw(canvas)
 
-        val text = gameScoreCurrent.distanceMeters.toString() + "m"
+        val text = gameScoreCurrent.getDistanceText(isMiles)
         val textX = iconBounds.right.toFloat() + iconMargin / 2
         val textY = iconBounds.top.toFloat() + iconSize / 2.2f + iconMargin
         canvas.drawText(text, textX, textY, textPaint)

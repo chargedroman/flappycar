@@ -10,4 +10,5 @@ data class FlappyGameArgs(
     val gameControl: FlappyGameControl,
     val gameCar: FlappyCustomCar,
     val streetResource: Int,
+    val isMiles: Boolean
 )

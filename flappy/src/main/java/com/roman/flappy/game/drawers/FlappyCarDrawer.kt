@@ -143,7 +143,7 @@ class FlappyCarDrawer(context: Context, gameCar: FlappyCustomCar): FlappyDrawer 
     }
 
 
-    fun onTilt(motionX: Float, motionY: Float, speedPercent: Double) {
+    fun onTilt(motionX: Float, motionY: Float) {
         val motionSensitivityX = MOTION_SENSITIVITY_X
         val motionSensitivityY = MOTION_SENSITIVITY_Y
         val x = (motionSensitivityX * -motionX).toInt()
