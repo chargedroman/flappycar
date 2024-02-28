@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import com.roman.flappy.R
+import com.roman.flappy.game.models.FlappyCustomCar
 import com.roman.flappy.view.FlappyDrawer
 
 /**
@@ -16,7 +17,7 @@ import com.roman.flappy.view.FlappyDrawer
  * Created: 14.02.24
  */
 
-class FlappyCarDrawer(context: Context, carResource: Int): FlappyDrawer {
+class FlappyCarDrawer(context: Context, gameCar: FlappyCustomCar): FlappyDrawer {
 
     companion object {
         const val MIN_MOVE = -15
@@ -26,7 +27,7 @@ class FlappyCarDrawer(context: Context, carResource: Int): FlappyDrawer {
     }
 
     private val carDrawable: Drawable?
-            = ContextCompat.getDrawable(context, carResource)
+            = gameCar.getDrawable(context)
 
     private val unChargingBubbleDrawable: Drawable?
             = ContextCompat.getDrawable(context, R.drawable.ic_uncharge_bubble)
@@ -53,29 +54,35 @@ class FlappyCarDrawer(context: Context, carResource: Int): FlappyDrawer {
             this.canvasWidth = canvas.width
             this.canvasHeight = canvas.height
 
-            val carWidthHalf = it.intrinsicWidth / 2
-            val carHeightHalf = it.intrinsicHeight / 2
+            val drawableWidthFactor = 6
+            val aspectRatio = it.intrinsicHeight.toFloat() / it.intrinsicWidth.toFloat()
+
+            val carWidth = canvasWidth / drawableWidthFactor
+            val carHeight = (carWidth * aspectRatio).toInt()
+
+            val carWidthHalf = carWidth / 2
+            val carHeightHalf = carHeight / 2
             val canvasWidthHalf = canvas.width / 2
 
             carBounds.left = canvasWidthHalf - carWidthHalf + currentShiftX
             carBounds.right = canvasWidthHalf + carWidthHalf + currentShiftX
-            carBounds.top = canvas.height - it.intrinsicHeight - carHeightHalf + currentShiftY
+            carBounds.top = canvas.height - carHeight - carHeightHalf + currentShiftY
             carBounds.bottom = canvas.height - carHeightHalf + currentShiftY
 
             carBounds.left = carBounds.left
                 .coerceAtLeast(0)
-                .coerceAtMost(canvas.width - it.intrinsicWidth)
+                .coerceAtMost(canvas.width - carWidth)
 
             carBounds.right = carBounds.right
-                .coerceAtLeast(it.intrinsicWidth)
+                .coerceAtLeast(carWidth)
                 .coerceAtMost(canvas.width)
 
             carBounds.top = carBounds.top
                 .coerceAtLeast(0)
-                .coerceAtMost(canvas.height - it.intrinsicHeight)
+                .coerceAtMost(canvas.height - carHeight)
 
             carBounds.bottom = carBounds.bottom
-                .coerceAtLeast(it.intrinsicHeight)
+                .coerceAtLeast(carHeight)
                 .coerceAtMost(canvas.height)
 
             it.bounds = carBounds

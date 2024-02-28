@@ -1,10 +1,12 @@
 package com.roman.minigame
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.roman.flappy.game.FlappyPresenter
+import com.roman.flappy.game.models.FlappyCustomCar
 import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.view.FlappyView
@@ -28,10 +30,16 @@ class MainActivity: AppCompatActivity() {
 
         val flappyView = findViewById<FlappyView>(R.id.view_flappy)
 
+        //define custom car
+        val gameCar = FlappyCustomCar(
+            carTintLayer1 = Color.parseColor("#E42023"),
+            carTintLayer2 = Color.parseColor("#EA5E49"),
+        )
+
         //define game parameters
         val gameArgs = FlappyGameArgs(
             gameControl = FlappyGameControl.SENSOR,
-            carResource = R.drawable.car2,
+            gameCar = gameCar,
             streetResource = R.drawable.street2
         )
 

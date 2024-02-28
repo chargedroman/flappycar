@@ -8,6 +8,6 @@ package com.roman.flappy.game.models
 
 data class FlappyGameArgs(
     val gameControl: FlappyGameControl,
-    val carResource: Int,
+    val gameCar: FlappyCustomCar,
     val streetResource: Int,
 )

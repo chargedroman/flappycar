@@ -44,7 +44,7 @@ class FlappyGameImpl(
     private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext, args.streetResource)
     private val laneDrawer = FlappyChargingLaneDrawer(applicationContext)
     private val coneDrawer = FlappyConeDrawer(applicationContext)
-    private val carDrawer = FlappyCarDrawer(applicationContext, args.carResource)
+    private val carDrawer = FlappyCarDrawer(applicationContext, args.gameCar)
     private val displayDrawer = FlappyDisplayDrawer(
         applicationContext,
         FlappyGameSpeedControllerDecreasing(),
