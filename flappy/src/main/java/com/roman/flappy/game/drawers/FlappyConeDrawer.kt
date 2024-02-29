@@ -14,7 +14,7 @@ import com.roman.flappy.R
 class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() {
 
     companion object {
-        const val MAX_CONES = 50
+        const val MAX_CONES = 40
         const val CONE_SIZE_FACTOR = 10.0
     }
 
@@ -77,7 +77,7 @@ class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() 
             return
         }
 
-        val amountOfCones = (currentDistanceMeters / 100).coerceAtLeast(1)
+        val amountOfCones = (currentDistanceMeters / 200).coerceAtLeast(1)
 
         if (list.size < amountOfCones) {
             list.add(createNewCone())
