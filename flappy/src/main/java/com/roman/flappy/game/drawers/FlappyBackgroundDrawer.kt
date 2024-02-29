@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import com.roman.flappy.R
 import com.roman.flappy.view.FlappyDrawer
 
 /**
@@ -12,10 +13,10 @@ import com.roman.flappy.view.FlappyDrawer
  * Author: romanvysotsky
  * Created: 14.02.24
  */
-class FlappyBackgroundDrawer(context: Context, streetResource: Int): FlappyDrawer {
+class FlappyBackgroundDrawer(context: Context): FlappyDrawer {
 
     private val backgroundDrawable: Drawable?
-        = ContextCompat.getDrawable(context, streetResource)
+        = ContextCompat.getDrawable(context, R.drawable.road)
 
     private val drawableAspectRatio =
         (backgroundDrawable?.intrinsicHeight?.toFloat() ?: 0.0f) / (backgroundDrawable?.intrinsicWidth ?: 1)

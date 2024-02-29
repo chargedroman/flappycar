@@ -88,11 +88,12 @@ class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectD
     override fun setObjectBounds(flappyObject: FlappyObject, canvasBounds: Rect) {
         val adjustedWidth = flappyObject.getWidthInside(canvasBounds)
         val adjustedHeight = flappyObject.getHeightInside(canvasBounds)
+        //this is to make the charging lanes look more centered; due to the uneven street texture
+        val balancing = adjustedWidth / 20
 
         val halfWidth = adjustedWidth / 2
-        val leftMiddle = (canvasBounds.right / 2) / 2
-        //the background is asymmetric; change/remove -20 if using another background
-        val rightMiddle = (canvasBounds.right / 2) + leftMiddle - 20
+        val leftMiddle = (canvasBounds.right / 2) / 2 + balancing
+        val rightMiddle = (canvasBounds.right / 2) + leftMiddle - (balancing * 2)
 
         val currentShift = flappyObject.currentDistanceShift
 

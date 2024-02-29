@@ -41,7 +41,7 @@ class FlappyGameImpl(
 
 
     //define all the drawers and then call them in the right order in [onDraw]
-    private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext, args.streetResource)
+    private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext)
     private val laneDrawer = FlappyChargingLaneDrawer(applicationContext)
     private val coneDrawer = FlappyConeDrawer(applicationContext)
     private val carDrawer = FlappyCarDrawer(applicationContext, args.gameCar)
