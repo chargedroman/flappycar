@@ -32,6 +32,7 @@ class FlappyGameImpl(
     //ticks 60 times each second
     private val ticker = FlappyTicker(this::tickTock)
     private var currentTick: Long = 0
+    private var isGameStarted: Boolean = false
 
     //listens to phone sensor
     private val accelerometer = FlappyTilt(applicationContext, this::onTilt)
@@ -54,12 +55,21 @@ class FlappyGameImpl(
 
 
     override fun startGame() = synchronized(this) {
+        if (isGameStarted)
+            return@synchronized
+
+        isGameStarted = true
         ticker.start()
+
         if (args.gameControl == FlappyGameControl.SENSOR)
             accelerometer.start()
     }
 
     override fun stopGame() = synchronized(this) {
+        if (isGameStarted.not())
+            return@synchronized
+
+        isGameStarted = false
         ticker.stop()
         accelerometer.stop()
     }
