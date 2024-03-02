@@ -14,7 +14,7 @@ import com.roman.flappy.R
 class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() {
 
     companion object {
-        const val MAX_CONES = 40
+        const val MAX_CONES = 30
         const val CONE_SIZE_FACTOR = 10.0
     }
 
@@ -30,6 +30,12 @@ class FlappyConeDrawer(context: Context): FlappyOverridableRandomObjectDrawer() 
 
     override val collisionThreshold: Double
         get() = 0.06 //merely touching the cone is enough
+
+    override val reShuffleDistanceIndexAddon: Int
+        get() = 2
+
+    override val reShuffleDistanceFactor: Int
+        get() = 4
 
 
     /**

@@ -40,7 +40,7 @@ class MainActivity: AppCompatActivity() {
         val gameArgs = FlappyGameArgs(
             gameControl = FlappyGameControl.SENSOR,
             gameCar = gameCar,
-            true,
+            false,
         )
 
         //bind presenter (which holds the game instance)

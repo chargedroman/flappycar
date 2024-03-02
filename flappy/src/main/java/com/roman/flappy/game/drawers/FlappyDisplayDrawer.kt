@@ -152,7 +152,13 @@ class FlappyDisplayDrawer(
     }
 
 
-    fun tickTock(currentTick: Long, currentKmPerH: Int, isOnLane: Boolean, isOnCone: Boolean) {
+    fun tickTock(
+        currentTick: Long,
+        currentKmPerH: Int,
+        isOnLane: Boolean,
+        isOnCone: Boolean,
+        isCarOnObstruction: Boolean,
+    ) {
         speedController.onTick(currentTick, batteryController.getCurrentBatteryStatus())
         batteryController.onTick(currentTick, currentKmPerH)
 
@@ -162,6 +168,11 @@ class FlappyDisplayDrawer(
 
         batteryController.notifyCarOnChargingLane(isOnLane)
         batteryController.notifyCarOnCone(isOnCone)
+        batteryController.notifyCarOnObstruction(isCarOnObstruction)
+
+        speedController.notifyCarOnChargingLane(isOnLane)
+        speedController.notifyCarOnCone(isOnCone)
+        speedController.notifyCarOnObstruction(isCarOnObstruction)
     }
 
 

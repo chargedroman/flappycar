@@ -24,6 +24,8 @@ class FlappyCarDrawer(context: Context, gameCar: FlappyCustomCar): FlappyDrawer 
         const val MAX_MOVE = 15
         const val MOTION_SENSITIVITY_X = 80
         const val MOTION_SENSITIVITY_Y = 60
+
+        const val BUBBLE_AFTERGLOW_TICK_LIMIT = 60
     }
 
     private val carDrawable: Drawable?
@@ -46,7 +48,7 @@ class FlappyCarDrawer(context: Context, gameCar: FlappyCustomCar): FlappyDrawer 
     private var currentShiftY = 0
 
     private var isCarOnChargingLane: Boolean = false
-    private var isCarOnCone: Boolean = false
+    private var unChargeAfterglowTimer: Int = 0
 
 
     override fun onDraw(canvas: Canvas) {
@@ -105,7 +107,9 @@ class FlappyCarDrawer(context: Context, gameCar: FlappyCustomCar): FlappyDrawer 
         }
 
         unChargingBubbleDrawable?.let {
-            if (isCarOnCone) {
+            val mustShowAfterglow = unChargeAfterglowTimer in 0..BUBBLE_AFTERGLOW_TICK_LIMIT
+
+            if (mustShowAfterglow) {
                 val halfWidth = it.intrinsicWidth
                 val halfHeight = it.intrinsicHeight
 
@@ -116,6 +120,8 @@ class FlappyCarDrawer(context: Context, gameCar: FlappyCustomCar): FlappyDrawer 
 
                 it.bounds = chargingBubbleBounds
                 it.draw(canvas)
+
+                unChargeAfterglowTimer--
             }
         }
     }
@@ -181,7 +187,13 @@ class FlappyCarDrawer(context: Context, gameCar: FlappyCustomCar): FlappyDrawer 
     }
 
     fun notifyCarOnCone(isOnCone: Boolean) {
-        this.isCarOnCone = isOnCone
+        if (isOnCone)
+            this.unChargeAfterglowTimer = BUBBLE_AFTERGLOW_TICK_LIMIT
+    }
+
+    fun notifyCarOnObstruction(isOnObstruction: Boolean) {
+        if (isOnObstruction)
+            this.unChargeAfterglowTimer = BUBBLE_AFTERGLOW_TICK_LIMIT
     }
 
 

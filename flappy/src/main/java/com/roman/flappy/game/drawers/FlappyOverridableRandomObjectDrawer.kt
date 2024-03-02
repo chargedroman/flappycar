@@ -25,6 +25,16 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
      */
     abstract val collisionThreshold: Double
 
+    /**
+     * to make flappyObjects appear not so often, increase this number
+     */
+    abstract val reShuffleDistanceIndexAddon: Int
+
+    /**
+     * to make flappyObjects appear more spread out, increase this number
+     */
+    abstract val reShuffleDistanceFactor: Int
+
 
 
     protected var isCarOnLeftSide = false
@@ -68,8 +78,18 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
 
         for (flappyObject in flappyObjects) {
             val intersects = intersectsArea(carPosition, flappyObject.bounds, collisionThreshold)
+            val isCollidedBefore = flappyObject.collidedWithUser
             flappyObject.collidedWithUser = flappyObject.collidedWithUser || intersects
-            isColliding = isColliding || intersects
+
+            val flag = if (flappyObject.collideMode == FlappyObject.CollideMode.DRIVE_OVER) {
+                //each tick will count
+                intersects
+            } else {
+                //only first collision counts
+                intersects && isCollidedBefore.not()
+            }
+
+            isColliding = isColliding || flag
         }
 
         return isColliding
@@ -108,7 +128,7 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
         }
 
         if (mustReShuffle()) {
-            for ((i, flappyObject) in flappyObjects.withIndex()) {
+            for ((i, flappyObject) in flappyObjects.shuffled().withIndex()) {
                 reShuffle(flappyObject, i)
             }
         }
@@ -149,10 +169,11 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
     }
 
     private fun getNextRandomDistance(index: Int): Int {
-        val baseRange = getHighestObjectHeight()
-        val increment = getHighestObjectHeight() * 2
+        val factor = reShuffleDistanceFactor.coerceAtLeast(1)
+        val baseRange = getHighestObjectHeight() * factor
+        val increment = getHighestObjectHeight() * factor * 2
 
-        val lowerBound = index * increment + baseRange
+        val lowerBound = (index + reShuffleDistanceIndexAddon) * increment + baseRange
         val upperBound = lowerBound + baseRange
 
         return randomGenerator.nextInt(lowerBound, upperBound)
@@ -173,12 +194,19 @@ abstract class FlappyOverridableRandomObjectDrawer: FlappyDrawer {
         val drawable: Drawable?,
         val drawableCollided: Drawable? = null,
         val bounds: Rect = Rect(),
+        val collideMode: CollideMode = CollideMode.ONCE,
         var isLeft: Boolean = true,
         var currentDistanceShift: Int = Int.MIN_VALUE,
         var randomDistance: Int = 0,
         var seenByUser: Boolean = false,
         var collidedWithUser: Boolean = false,
     ) {
+
+        enum class CollideMode {
+            ONCE,
+            DRIVE_OVER
+        }
+
         private val aspectRatio = (drawable?.intrinsicHeight?.toFloat() ?: 0f) / (drawable?.intrinsicWidth?.toFloat() ?: 1f)
 
         fun getHeightInside(canvasBounds: Rect): Int {

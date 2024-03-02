@@ -10,6 +10,7 @@ import com.roman.flappy.game.drawers.FlappyCarDrawer
 import com.roman.flappy.game.drawers.FlappyChargingLaneDrawer
 import com.roman.flappy.game.drawers.FlappyConeDrawer
 import com.roman.flappy.game.drawers.FlappyDisplayDrawer
+import com.roman.flappy.game.drawers.FlappyObstructionDrawer
 import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.game.models.FlappyGameScore
@@ -45,6 +46,7 @@ class FlappyGameImpl(
     private val backgroundDrawer = FlappyBackgroundDrawer(applicationContext)
     private val laneDrawer = FlappyChargingLaneDrawer(applicationContext)
     private val coneDrawer = FlappyConeDrawer(applicationContext)
+    private val obstructionDrawer = FlappyObstructionDrawer(applicationContext)
     private val carDrawer = FlappyCarDrawer(applicationContext, args.gameCar)
     private val displayDrawer = FlappyDisplayDrawer(
         applicationContext,
@@ -95,6 +97,7 @@ class FlappyGameImpl(
         backgroundDrawer.onDraw(canvas)
         laneDrawer.onDraw(canvas)
         coneDrawer.onDraw(canvas)
+        obstructionDrawer.onDraw(canvas)
         carDrawer.onDraw(canvas)
         displayDrawer.onDraw(canvas)
     }
@@ -112,17 +115,21 @@ class FlappyGameImpl(
         val currentKmPerH = displayDrawer.getCurrentSpeed()
         val isCarOnLane = laneDrawer.isCollidingWith(carDrawer.getCarBounds())
         val isCarOnCone = coneDrawer.isCollidingWith(carDrawer.getCarBounds())
+        val isCarOnObstruction = obstructionDrawer.isCollidingWith(carDrawer.getCarBounds())
         carDrawer.notifyCarOnChargingLane(isCarOnLane)
         carDrawer.notifyCarOnCone(isCarOnCone)
+        carDrawer.notifyCarOnObstruction(isCarOnObstruction)
 
         backgroundDrawer.tickTock(currentKmPerH)
         laneDrawer.tickTock(currentKmPerH)
         coneDrawer.tickTock(currentKmPerH)
-        displayDrawer.tickTock(currentTick, currentKmPerH, isCarOnLane, isCarOnCone)
+        obstructionDrawer.tickTock(currentKmPerH)
+        displayDrawer.tickTock(currentTick, currentKmPerH, isCarOnLane, isCarOnCone, isCarOnObstruction)
 
         val score = displayDrawer.getGameScore()
         coneDrawer.updateAmountOfCones(score.distanceMeters)
-        laneDrawer.udpateAmountOfLanes(score.distanceMeters)
+        obstructionDrawer.updateAmountOfObstructions(score.distanceMeters)
+        laneDrawer.udpateAmountOfLanes(score.currentSpeedKmPerHour)
 
         gameScore.postValue(score)
     }

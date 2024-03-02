@@ -15,4 +15,8 @@ interface FlappyGameSpeedController {
     fun getCurrentSpeedKmPerHour(): Int
     fun getCurrentSpeedPercent(): Double
     fun getCurrentDistanceMeters(): Long
+
+    fun notifyCarOnChargingLane(isOnLane: Boolean)
+    fun notifyCarOnCone(isOnCone: Boolean)
+    fun notifyCarOnObstruction(isOnObstruction: Boolean)
 }

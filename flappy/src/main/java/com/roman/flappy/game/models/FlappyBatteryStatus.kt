@@ -11,7 +11,11 @@ data class FlappyBatteryStatus(
     val maxChargeWh: Int,
 ) {
     fun getPercentage(): Int {
-        return currentChargeWh / (maxChargeWh / 100)
+        return currentChargeWh / getOnePercent()
+    }
+
+    fun getOnePercent(): Int {
+        return maxChargeWh / 100
     }
 
     fun isEmpty(): Boolean {

@@ -3,6 +3,7 @@ package com.roman.flappy.game.drawers
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.roman.flappy.R
 
@@ -33,9 +34,9 @@ class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectD
 
 
     private val list = mutableListOf(
-        FlappyObject(LANE_SIZE_FACTOR, laneSmall),
-        FlappyObject(LANE_SIZE_FACTOR, laneHuge),
-        FlappyObject(LANE_SIZE_FACTOR, laneSmall),
+        createNewLane(laneSmall),
+        createNewLane(laneBig),
+        createNewLane(laneHuge),
     )
 
     override val flappyObjects: List<FlappyObject>
@@ -43,6 +44,14 @@ class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectD
 
     override val collisionThreshold: Double
         get() = 0.5
+
+    override val reShuffleDistanceIndexAddon: Int
+        get() = reShuffleIndex
+
+    override val reShuffleDistanceFactor: Int
+        get() = 1
+
+    private var reShuffleIndex = 1
 
 
     override fun onDraw(canvas: Canvas) {
@@ -109,19 +118,17 @@ class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectD
         flappyObject.bounds.bottom = adjustedHeight + currentShift
     }
 
-    fun udpateAmountOfLanes(currentDistanceMeters: Long) {
-        if (list.size >= MAX_LANES) {
-            return
+    fun udpateAmountOfLanes(currentSpeedKmPerHour: Int) {
+        reShuffleIndex = when (currentSpeedKmPerHour) {
+            in 0 .. 30 -> 4
+            in 0 .. 40 -> 3
+            in 0 .. 50 -> 2
+            else -> 1
         }
+    }
 
-        val amountOfLanes = 1 + (currentDistanceMeters / 200).coerceAtLeast(1)
-
-        if (list.size < amountOfLanes) {
-            if (currentDistanceMeters <= 600)
-                list.add(FlappyObject(LANE_SIZE_FACTOR, laneBig))
-            else
-                list.add(FlappyObject(LANE_SIZE_FACTOR, laneHuge))
-        }
+    private fun createNewLane(drawable: Drawable?): FlappyObject {
+        return FlappyObject(LANE_SIZE_FACTOR, drawable, collideMode = FlappyObject.CollideMode.DRIVE_OVER)
     }
 
 }

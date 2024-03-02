@@ -32,6 +32,9 @@ class FlappyGameSpeedControllerDecreasing(
         }
 
         currentKmPerH += when {
+            currentKmPerH < 3 -> forTick(5, currentTick)
+            currentKmPerH < 7 -> forTick(15, currentTick)
+            currentKmPerH < 15 -> forTick(30, currentTick)
             currentKmPerH < 30 -> forTick(60, currentTick)
             currentKmPerH < 60 -> forTick(120, currentTick)
             currentKmPerH < 90 -> forTick(180, currentTick)
@@ -39,9 +42,6 @@ class FlappyGameSpeedControllerDecreasing(
             currentKmPerH < 150 -> forTick(270, currentTick)
             else -> forTick(300, currentTick)
         }
-
-        if (currentKmPerH < gameSpeedInitialKmPerH)
-            currentKmPerH = gameSpeedInitialKmPerH
 
         if (currentKmPerH > gameSpeedMaxKmPerH)
             currentKmPerH = gameSpeedMaxKmPerH
@@ -57,6 +57,25 @@ class FlappyGameSpeedControllerDecreasing(
 
     override fun getCurrentDistanceMeters(): Long {
         return currentDistanceCm / 100
+    }
+
+
+    override fun notifyCarOnChargingLane(isOnLane: Boolean) {
+        //nop
+    }
+
+    override fun notifyCarOnCone(isOnCone: Boolean) {
+        if (isOnCone.not() || currentKmPerH >= 30) return
+
+        currentKmPerH -= 1
+        currentKmPerH = currentKmPerH.coerceAtLeast(0)
+    }
+
+    override fun notifyCarOnObstruction(isOnObstruction: Boolean) {
+        if (isOnObstruction.not()) return
+
+        currentKmPerH -= 4
+        currentKmPerH = currentKmPerH.coerceAtLeast(0)
     }
 
 
