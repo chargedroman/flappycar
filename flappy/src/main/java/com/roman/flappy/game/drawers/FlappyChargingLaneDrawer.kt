@@ -16,7 +16,6 @@ import com.roman.flappy.R
 class FlappyChargingLaneDrawer(context: Context): FlappyOverridableRandomObjectDrawer() {
 
     companion object {
-        const val MAX_LANES = 6
         const val LANE_SIZE_FACTOR = 2.5
     }
 

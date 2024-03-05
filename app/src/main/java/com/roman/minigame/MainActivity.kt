@@ -40,6 +40,7 @@ class MainActivity: AppCompatActivity() {
         val gameArgs = FlappyGameArgs(
             gameControl = FlappyGameControl.SENSOR,
             gameCar = gameCar,
+            initialChargePercent = 80,
             false,
         )
 

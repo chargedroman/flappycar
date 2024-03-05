@@ -11,11 +11,12 @@ import com.roman.flappy.game.drawers.FlappyChargingLaneDrawer
 import com.roman.flappy.game.drawers.FlappyConeDrawer
 import com.roman.flappy.game.drawers.FlappyDisplayDrawer
 import com.roman.flappy.game.drawers.FlappyObstructionDrawer
+import com.roman.flappy.game.models.FlappyBatteryStatus
 import com.roman.flappy.game.models.FlappyGameArgs
 import com.roman.flappy.game.models.FlappyGameControl
 import com.roman.flappy.game.models.FlappyGameScore
-import com.roman.flappy.game.tools.FlappyBatteryControllerOne
-import com.roman.flappy.game.tools.FlappyGameSpeedControllerDecreasing
+import com.roman.flappy.game.tools.FlappyBatteryControllerImpl
+import com.roman.flappy.game.tools.FlappyGameSpeedControllerImpl
 import com.roman.flappy.view.FlappyDrawer
 
 /**
@@ -29,6 +30,11 @@ class FlappyGameImpl(
     private val args: FlappyGameArgs,
     private val triggerRedraw: () -> Unit
 ): FlappyGame, FlappyDrawer {
+
+    companion object {
+        const val BATTERY_MAX = 82000
+    }
+
 
     //ticks 60 times each second
     private val ticker = FlappyTicker(this::tickTock)
@@ -51,8 +57,11 @@ class FlappyGameImpl(
     private val displayDrawer = FlappyDisplayDrawer(
         applicationContext,
         args.isMiles,
-        FlappyGameSpeedControllerDecreasing(),
-        FlappyBatteryControllerOne(),
+        FlappyGameSpeedControllerImpl(),
+        FlappyBatteryControllerImpl(FlappyBatteryStatus(
+            (BATTERY_MAX * args.getChargePercentFactor()).toInt(),
+            BATTERY_MAX)
+        ),
     )
 
 

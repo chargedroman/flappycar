@@ -29,9 +29,10 @@ data class FlappyGameScore(
     fun getDistanceText(isMiles: Boolean): String {
         return if (isMiles) {
             val distance = distanceMeters * FEET_FACTOR
-            String.format("%.0f", distance) + "f"
+            val formatted = String.format("%.0f", distance)
+            "$formatted f"
         } else {
-            distanceMeters.toString() + "m"
+            "$distanceMeters m"
         }
     }
 

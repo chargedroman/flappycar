@@ -7,10 +7,8 @@ import com.roman.flappy.game.models.FlappyBatteryStatus
  * Author: romanvysotsky
  * Created: 17.02.24
  */
-class FlappyBatteryControllerOne(
-    //we could also start with 65600 = 80%
+class FlappyBatteryControllerImpl(
     private val currentStatus: FlappyBatteryStatus
-        = FlappyBatteryStatus(10000, 82000)
 ): FlappyBatteryController {
 
 
